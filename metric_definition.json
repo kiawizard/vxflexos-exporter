@@ -1,0 +1,247 @@
+{
+  "maxCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property maxCapacityInKb",
+    "name" : "capacity_max_kb"
+  },
+  "capacityInUseInKb": {
+    "type" : "gauge",
+    "help": "Property capacityInUseInKb",
+    "name" : "capacity_use_kb"
+  },
+  "unusedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property unusedCapacityInKb",
+    "name" : "capacity_unused_kb"
+  },
+  "spareCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property spareCapacityInKb",
+    "name" : "capacity_spare_kb"
+  },
+  "capacityAvailableForVolumeAllocationInKb": {
+    "type" : "gauge",
+    "help": "Property capacityAvailableForVolumeAllocationInKb",
+    "name" : "capacity_available_volume_allocation_kb"
+  },
+  "protectedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property protectedCapacityInKb",
+    "name" : "capacity_protected_kb"
+  },
+  "degradedHealthyCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property degradedHealthyCapacityInKb",
+    "name" : "capacity_degraded_healthy_kb"
+  },
+  "degradedFailedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property degradedFailedCapacityInKb",
+    "name" : "capacity_degraded_failed_kb"
+  },
+  "failedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property failedCapacityInKb",
+    "name" : "capacity_failed_kb"
+  },
+  "semiProtectedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property semiProtectedCapacityInKb",
+    "name" : "capacity_semi_protected_kb"
+  },
+  "movingCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property movingCapacityInKb",
+    "name" : "capacity_moving_kb"
+  },
+  "fwdRebuildCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property fwdRebuildCapacityInKb",
+    "name" : "capacity_fwd_rebuild_kb"
+  },
+  "bckRebuildCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property bckRebuildCapacityInKb",
+    "name" : "capacity_bck_rebuild_kb"
+  },
+  "rebalanceCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property rebalanceCapacityInKb",
+    "name" : "capacity_rebalance_kb"
+  },
+  "fixedReadErrorCount": {
+    "type" : "gauge",
+    "help": "Property fixedReadErrorCount",
+    "name" : "fixed_read_error"
+  },
+  "fwdRebuildReadBwc": {
+    "type" : "gauge",
+    "help": "Property fwdRebuildReadBwc",
+    "name" : "read_fwd_rebuild"
+  },
+  "fwdRebuildWriteBwc": {
+    "type" : "gauge",
+    "help": "Property fwdRebuildWriteBwc",
+    "name" : "write_fwd_rebuild"
+  },
+  "bckRebuildReadBwc": {
+    "type" : "gauge",
+    "help": "Property bckRebuildReadBwc",
+    "name" : "read_bck_rebuild"
+  },
+  "bckRebuildWriteBwc": {
+    "type" : "gauge",
+    "help": "Property bckRebuildWriteBwc",
+    "name" : "write_bck_rebuild"
+  },
+  "rebalanceReadBwc": {
+    "type" : "gauge",
+    "help": "Property rebalanceReadBwc",
+    "name" : "read_rebalance"
+  },
+  "rebalanceWriteBwc": {
+    "type" : "gauge",
+    "help": "Property rebalanceWriteBwc",
+    "name" : "write_rebalance"
+  },
+  "totalReadBwc": {
+    "type" : "gauge",
+    "help": "Property totalReadBwc",
+    "name" : "read_total"
+  },
+  "totalWriteBwc": {
+    "type" : "gauge",
+    "help": "Property totalWriteBwc",
+    "name" : "write_total"
+  },
+  "numOfUnmappedVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfUnmappedVolumes",
+    "name" : "num_unmapped_volumes"
+  },
+  "numOfMappedToAllVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfMappedToAllVolumes",
+    "name" : "num_mapped_to_all_volumes"
+  },
+  "numOfThickBaseVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfThickBaseVolumes",
+    "name" : "num_thick_base_volumes"
+  },
+  "numOfThinBaseVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfThinBaseVolumes",
+    "name" : "num_thin_base_volumes"
+  },
+  "numOfSnapshots": {
+    "type" : "gauge",
+    "help": "Property numOfSnapshots",
+    "name" : "num_snapshots"
+  },
+  "numOfVolumesInDeletion": {
+    "type" : "gauge",
+    "help": "Property numOfVolumesInDeletion",
+    "name" : "num_volumes_in_deletion"
+  },
+  "numOfDevices": {
+    "type" : "gauge",
+    "help": "Property numOfDevices",
+    "name" : "num_devices"
+  },
+  "numOfSds": {
+    "type" : "gauge",
+    "help": "Property numOfSds",
+    "name" : "num_sds"
+  },
+  "numOfStoragePools": {
+    "type" : "gauge",
+    "help": "Property numOfStoragePools",
+    "name" : "num_storage_pools"
+  },
+  "numOfVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfVolumes",
+    "name" : "num_volumes"
+  },
+  "numOfVtrees": {
+    "type" : "gauge",
+    "help": "Property numOfVtrees",
+    "name" : "num_vtrees"
+  },
+  "numOfProtectionDomains": {
+    "type" : "gauge",
+    "help": "Property numOfProtectionDomains",
+    "name" : "num_protection_domains"
+  },
+  "numOfSdc": {
+    "type" : "gauge",
+    "help": "Property numOfSdc",
+    "name" : "num_sdc"
+  },
+  "numOfFaultSets": {
+    "type" : "gauge",
+    "help": "Property numOfFaultSets",
+    "name" : "num_fault_sets"
+  },
+  "numOfRfcacheDevices": {
+    "type" : "gauge",
+    "help": "Property numOfRfcacheDevices",
+    "name" : "num_rfcache_devices"
+  },
+  "numOfMappedSdcs": {
+    "type" : "gauge",
+    "help": "Property numOfMappedSdcs",
+    "name" : "num_mapped_sdcs"
+  },
+  "numOfChildVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfChildVolumes",
+    "name" : "num_child_volumes"
+  },
+  "numOfDescendantVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfDescendantVolumes",
+    "name" : "num_descendant_volumes"
+  },
+  "numOfMappedVolumes": {
+    "type" : "gauge",
+    "help": "Property numOfMappedVolumes",
+    "name" : "mapped_volumes"
+  },
+  "rfcacheReadsReceived": {
+    "type" : "gauge",
+    "help": "Property rfcacheReadsReceived",
+    "name" : "rfcache_reads_rcvd"
+  },
+  "userDataReadBwc": {
+    "type" : "gauge",
+    "help": "Property userDataReadBwc",
+    "name" : "read_user_data"
+  },
+  "userDataWriteBwc": {
+    "type" : "gauge",
+    "help": "Property userDataWriteBwc",
+    "name" : "write_user_data"
+  },
+  "avgReadLatencyInMicrosec": {
+    "type" : "gauge",
+    "help": "Property avgReadLatencyInMicrosec",
+    "name" : "read_latency_ms"
+  },
+  "avgWriteLatencyInMicrosec": {
+    "type" : "gauge",
+    "help": "Property avgWriteLatencyInMicrosec",
+    "name" : "write_latency_ms"
+  },
+  "avgReadSizeInBytes": {
+    "type" : "gauge",
+    "help": "Property avgReadSizeInBytes",
+    "name" : "read_size_bytes"
+  },
+  "avgWriteSizeInBytes": {
+    "type" : "gauge",
+    "help": "Property avgWriteSizeInBytes",
+    "name" : "write_size_bytes"
+  }
+}

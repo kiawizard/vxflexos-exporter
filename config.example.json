@@ -1,0 +1,13 @@
+{
+  "sio": {
+    "host" : "vxflexhost.domain.com",
+    "port": 443,
+    "user": "admin",
+    "pass" : "qwerty"
+  },
+  "prom": {
+    "listen_ip" : "0.0.0.0",
+    "listen_port" : 9187,
+    "prefix" : "vxf_"
+  }
+}
