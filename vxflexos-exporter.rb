@@ -4,49 +4,38 @@ require 'net/http'
 require 'openssl'
 require 'socket'
 
-app = VxFlexOSExporter.new
-server = TCPServer.new @config['prom']['listen_port']
-
-while session = server.accept
-  app.get_auth_token
-  app.get_tree
-  app.get_stats
-  app.process_stats
-
-  request = session.gets
-  puts request
-
-  session.print "HTTP/1.1 200\r\n" # 1
-  session.print "Content-Type: text/plaintext\r\n" # 2
-  session.print "\r\n" # 3
-  app.output_stats(session)
-
-  session.close
-  app.get_stats
-  app.process_stats
-end
-
 class VxFlexOSExporter
-  @config
-  @query
-  @defs
-  @auth_token
-  @tree
-  @stats
-  @stats_processed
-
   def initialize
-    file = open("config.json") rescue raise('Config file config.json is missing in the root folder of Vxf2Prom')
+    file = open("config.json") rescue raise('config file config.json is missing in the root folder of Vxf2Prom')
     json = file.read
-    @config = JSON.parse(json) rescue raise('Config file config.json has some syntax errors inside, please validate it')
+    @config = JSON.parse(json) rescue raise('config file config.json has some syntax errors inside, please validate it')
 
-    file = open("metric_query_selection.json") rescue raise('Config file metric_query_selection.json is missing in the root folder of Vxf2Prom')
+    file = open("metric_query_selection.json") rescue raise('config file metric_query_selection.json is missing in the root folder of Vxf2Prom')
     json = file.read
-    @query = JSON.parse(json) rescue raise('Config file metric_query_selection.json has some syntax errors inside, please validate it')
+    @query = JSON.parse(json) rescue raise('config file metric_query_selection.json has some syntax errors inside, please validate it')
 
-    file = open("metric_definition.json") rescue raise('Config file metric_definition.json is missing in the root folder of Vxf2Prom')
+    file = open("metric_definition.json") rescue raise('config file metric_definition.json is missing in the root folder of Vxf2Prom')
     json = file.read
-    @defs = JSON.parse(json) rescue raise('Config file metric_definition.json has some syntax errors inside, please validate it')
+    @defs = JSON.parse(json) rescue raise('config file metric_definition.json has some syntax errors inside, please validate it')
+
+    server = TCPServer.new @config['prom']['listen_port']
+
+    while session = server.accept
+      get_auth_token
+      get_tree
+      get_stats
+      process_stats
+
+      request = session.gets
+      puts request
+
+      session.print "HTTP/1.1 200\r\n" # 1
+      session.print "Content-Type: text/plaintext\r\n" # 2
+      session.print "\r\n" # 3
+      output_stats(session)
+
+      session.close
+    end
   end
 
   def get_auth_token
@@ -62,7 +51,7 @@ class VxFlexOSExporter
       response = http.request(request)
 
       if response.body.include?('Unauthorized')
-        raise 'Auth at VXFlexOS failed: please check login and password in config.json'
+        raise 'Auth at VXFlexOS failed: please check login and password in @config.json'
       else
         @auth_token = response.body.gsub('"','')
       end
@@ -173,3 +162,5 @@ class VxFlexOSExporter
     end
   end
 end
+
+app = VxFlexOSExporter.new
