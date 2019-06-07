@@ -39,14 +39,14 @@ class VxFlexOSExporter
   end
 
   def get_auth_token
-    uri = URI("https://#{@config['sio']['host']}:#{@config['sio']['port'] || 443}/api/login")
+    uri = URI("https://#{@config['vxf']['host']}:#{@config['vxf']['port'] || 443}/api/login")
 
-    Net::HTTP.start(@config['sio']['host'], @config['sio']['port'] || 443,
+    Net::HTTP.start(@config['vxf']['host'], @config['vxf']['port'] || 443,
       :use_ssl => uri.scheme == 'https', 
       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
 
       request = Net::HTTP::Get.new(uri.request_uri)
-      request.basic_auth(@config['sio']['user'], @config['sio']['pass'])
+      request.basic_auth(@config['vxf']['user'], @config['vxf']['pass'])
 
       response = http.request(request)
 
@@ -60,8 +60,8 @@ class VxFlexOSExporter
   end
 
   def get_tree
-    uri = URI("https://#{@config['sio']['host']}:#{@config['sio']['port'] || 443}/api/instances/")
-    Net::HTTP.start(@config['sio']['host'], @config['sio']['port'] || 443,
+    uri = URI("https://#{@config['vxf']['host']}:#{@config['vxf']['port'] || 443}/api/instances/")
+    Net::HTTP.start(@config['vxf']['host'], @config['vxf']['port'] || 443,
       :use_ssl => uri.scheme == 'https', 
       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
 
@@ -79,10 +79,10 @@ class VxFlexOSExporter
   end
 
   def get_stats
-    uri = URI("https://#{@config['sio']['host']}:#{@config['sio']['port'] || 443}/api/instances/querySelectedStatistics")
+    uri = URI("https://#{@config['vxf']['host']}:#{@config['vxf']['port'] || 443}/api/instances/querySelectedStatistics")
     header = {'Content-Type': 'application/json'}
     
-    Net::HTTP.start(@config['sio']['host'], @config['sio']['port'] || 443,
+    Net::HTTP.start(@config['vxf']['host'], @config['vxf']['port'] || 443,
       :use_ssl => uri.scheme == 'https', 
       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
 
