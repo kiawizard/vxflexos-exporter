@@ -1,5 +1,5 @@
 require 'json'
-require 'pry'
+#require 'pry'
 require 'net/http'
 require 'openssl'
 require 'socket'
@@ -149,7 +149,7 @@ class VxFlexOSExporter
 
       rows.each do |row|
         path_str = (@config['prom']['prefix'] || '') + row[:type].downcase + '_' + param_prom_name
-        tags_str = '{' + row[:tags].map{|t,v| t.to_s + '="' + v + '"'}.join(', ') + '}'
+        tags_str = '{' + row[:tags].map{|t,v| t.to_s + '="' + v + '"'}.join(',') + '}'
 
         if row[:value].is_a?(Hash)
           target.print path_str + '_iops' + tags_str + ' ' + (row[:value]['numSeconds'] > 0 ? row[:value]['numOccured']/row[:value]['numSeconds'] : 0).to_s + "\r\n"
