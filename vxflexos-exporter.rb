@@ -1,5 +1,5 @@
 require 'json'
-#require 'pry'
+require 'pry' if Gem::Specification.find_by_name('pry')
 require 'net/http'
 require 'openssl'
 require 'socket'
@@ -105,25 +105,39 @@ class VxFlexOSExporter
       tags = {clu_id: @tree['System']['id'], clu_name: @tree['System']['name']}
       if type != 'System'
         level1.each do |device_id, device_stats|
+          tags = {clu_id: @tree['System']['id'], clu_name: @tree['System']['name']}
           if type == 'Sdc'
-            tags.merge!({sdc_id: device_id, sdc_name: @tree['sdcList'].first{|sdc| sdc.id == device_id}['name']})
+            sdc = @tree['sdcList'].select{|sdc| sdc['id'] == device_id}.first
+            tags.merge!({sdc_id: device_id, sdc_name: sdc['name']})
           elsif type == 'ProtectionDomain'
-            tags.merge!({pdo_id: device_id, pdo_name: @tree['protectionDomainList'].first{|pdo| pdo.id == device_id}['name']})
+            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == device_id}.first
+            tags.merge!({pdo_id: device_id, pdo_name: protection_domain['name']})
           elsif type == 'Sds'
             protection_domain_id = @tree['sdsList'].first{|sds| sds.id == device_id}['protectionDomainId']
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: @tree['protectionDomainList'].first{|pdo| pdo.id == protection_domain_id}['name'], sds_id: device_id, sds_name: @tree['sdsList'].first{|sds| sds.id == device_id}['name']})
+            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+            sds = @tree['sdsList'].select{|sds| sds['id'] == device_id}.first
+            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sds_id: device_id, sds_name: sds['name']})
           elsif type == 'StoragePool'
             protection_domain_id = @tree['storagePoolList'].first{|sto| sto.id == device_id}['protectionDomainId']
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: @tree['protectionDomainList'].first{|pdo| pdo.id == protection_domain_id}['name'], sto_id: device_id, sto_name: @tree['storagePoolList'].first{|sto| sto.id == device_id}['name']})
+            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+            storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == device_id}.first
+            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: device_id, sto_name: storage_pool['name']})
           elsif type == 'Volume'
             storage_pool_id = @tree['volumeList'].first{|vol| vol.id == device_id}['storagePoolId']
-            protection_domain_id = @tree['storagePoolList'].first{|sto| sto.id == storage_pool_id}['protectionDomainId']
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: @tree['protectionDomainList'].first{|pdo| pdo.id == protection_domain_id}['name'], sto_id: storage_pool_id, sto_name: @tree['storagePoolList'].first{|sto| sto.id == storage_pool_id}['name'], vol_id: device_id, vol_name: @tree['volumeList'].first{|vol| vol.id == device_id}['name']})
+            storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
+            protection_domain_id = storage_pool['protectionDomainId']
+            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+            volume = @tree['volumeList'].select{|vol| vol['id'] == device_id}.first
+            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: storage_pool_id, sto_name: storage_pool['name'], vol_id: device_id, vol_name: volume['name']})
           elsif type == 'Device'
-            storage_pool_id = @tree['deviceList'].first{|dev| dev.id == device_id}['storagePoolId']
-            sds_id = @tree['deviceList'].first{|dev| dev.id == device_id}['sdsId']
-            protection_domain_id = @tree['storagePoolList'].first{|sto| sto.id == storage_pool_id}['protectionDomainId']
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: @tree['protectionDomainList'].first{|pdo| pdo.id == protection_domain_id}['name'], sto_id: storage_pool_id, sto_name: @tree['storagePoolList'].first{|sto| sto.id == storage_pool_id}['name'], sds_id: sds_id, sds_name: @tree['sdsList'].first{|sds| sds.id == sds_id}['name'], dev_id: device_id, dev_name: @tree['deviceList'].first{|dev| dev.id == device_id}['name'], dev_path: @tree['deviceList'].first{|dev| dev.id == device_id}['deviceCurrentPathName']})
+            device = @tree['deviceList'].select{|dev| dev['id'] == device_id}.first
+            storage_pool_id = device['storagePoolId']
+            storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
+            sds_id = device['sdsId']
+            sds = @tree['sdsList'].select{|sds| sds['id'] == sds_id}.first
+            protection_domain_id = storage_pool['protectionDomainId']
+            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: storage_pool_id, sto_name: storage_pool['name'], sds_id: sds_id, sds_name: sds['name'], dev_id: device_id, dev_name: device['name'], dev_path: device['deviceCurrentPathName']})
           end
           
           device_stats.each do |param, value|
