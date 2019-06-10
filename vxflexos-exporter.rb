@@ -1,5 +1,7 @@
 require 'json'
-require 'pry' if Gem::Specification.find_by_name('pry')
+if (Gem::Specification.find_by_name('pry') rescue false)
+  require 'pry'
+end
 require 'net/http'
 require 'openssl'
 require 'socket'
