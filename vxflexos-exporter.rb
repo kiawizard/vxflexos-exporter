@@ -32,6 +32,7 @@ class VxFlexOSExporter
       get_tree
       get_stats
       process_stats
+      convert_kb_iops
 
       request = session.gets
       puts request
@@ -81,6 +82,7 @@ class VxFlexOSExporter
         raise 'Tree request failed: maybe the token expired?'
       else
         @tree = JSON.parse(response.body)
+        File.open('examples/tree.json', 'w') { |file| file.write(response.body) }
       end
     end
   end
@@ -102,6 +104,7 @@ class VxFlexOSExporter
           puts 'Stats request failed: maybe the token expired?'
         else
           @stats = JSON.parse(response.body)
+          File.open('examples/stats.json', 'w') { |file| file.write(response.body) }
         end
     end
   end
@@ -159,27 +162,35 @@ class VxFlexOSExporter
     end
   end
 
+  def convert_kb_iops
+    conv = []
+    @stats_processed.each do |row|
+      if row[:value].is_a?(Hash)
+        conv << {type: row[:type], param: row[:param], postfix: 'iops', value: (row[:value]['numSeconds'] > 0 ? row[:value]['numOccured']/row[:value]['numSeconds'] : 0), tags: row[:tags]}
+        conv << {type: row[:type], param: row[:param], postfix: 'kb', value: (row[:value]['numSeconds'] > 0 ? row[:value]['totalWeightInKb']/row[:value]['numSeconds'] : 0), tags: row[:tags]}
+      else
+        conv << row
+      end
+    end
+    @stats_processed = conv
+  end
+
   def output_stats(target)
-    @stats_processed.group_by{|s| s[:type]+s[:param]}.each do |group, rows|
-      param_prom_name = rows[0][:param].gsub(/(.)([A-Z])/,'\1_\2').downcase
+    @stats_processed.group_by{|s| s[:type]+s[:param]+(s[:postfix] || '')}.each do |group, rows|
+      param_prom_name = rows[0][:param].gsub(/(.)([A-Z])/,'\1_\2').downcase+
+      path_str = ''
       if @defs[rows[0][:param]]
-        target.print "# HELP #{rows[0][:param]} #{@defs[rows[0][:param]]['help']}" + "\r\n" if @defs[rows[0][:param]]['help']
-        target.print "# TYPE #{rows[0][:param]} #{@defs[rows[0][:param]]['type']}" + "\r\n" if @defs[rows[0][:param]]['type']
         param_prom_name = @defs[rows[0][:param]]['name'] if @defs[rows[0][:param]]['name']
+        path_str = (@config['prom']['prefix'] || '') + rows[0][:type].downcase + '_' + param_prom_name + (rows[0][:postfix] ? '_'+rows[0][:postfix] : '')
+        target.print "# HELP #{path_str} #{@defs[rows[0][:param]]['help']}" + "\r\n" if @defs[rows[0][:param]]['help']
+        target.print "# TYPE #{path_str} #{@defs[rows[0][:param]]['type']}" + "\r\n" if @defs[rows[0][:param]]['type']
+        @defs[rows[0][:param]]['used'] = true
       end
 
       rows.each do |row|
-        path_str = (@config['prom']['prefix'] || '') + row[:type].downcase + '_' + param_prom_name
         tags_str = '{' + row[:tags].map{|t,v| t.to_s + '="' + v + '"'}.join(',') + '}'
-
-        if row[:value].is_a?(Hash)
-          target.print path_str + '_iops' + tags_str + ' ' + (row[:value]['numSeconds'] > 0 ? row[:value]['numOccured']/row[:value]['numSeconds'] : 0).to_s + "\r\n"
-          target.print path_str + '_bw' + tags_str + ' ' + (row[:value]['numSeconds'] > 0 ? row[:value]['totalWeightInKb']/row[:value]['numSeconds'] : 0).to_s + "\r\n"
-        else
-          target.print path_str + tags_str + ' ' + row[:value].to_s + "\r\n"
-        end
+        target.print path_str + tags_str + ' ' + row[:value].to_s + "\r\n"
       end
-
     end
   end
 end
