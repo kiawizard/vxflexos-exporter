@@ -1,10 +1,15 @@
 require 'json'
-if (Gem::Specification.find_by_name('pry') rescue false)
-  require 'pry'
-end
 require 'net/http'
 require 'openssl'
 require 'socket'
+
+def gem_available?(name)
+  Gem::Specification.find_by_name(name)
+rescue Gem::LoadError
+  false
+end
+
+require 'pry' if gem_available?('pry')
 
 class VxFlexOSExporter
   def initialize
