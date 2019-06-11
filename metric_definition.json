@@ -214,6 +214,36 @@
     "help": "Property rfcacheReadsReceived",
     "name" : "rfcache_reads_rcvd"
   },
+  "rfcacheWritesReceived": {
+    "type" : "counter",
+    "help": "Property rfcacheWritesReceived",
+    "name" : "rfcache_writes_rcvd"
+  },
+  "rfcacheFdAvgReadTime": {
+    "type" : "gauge",
+    "help": "Property rfcacheFdAvgReadTime",
+    "name" : "rfcache_fd_read_latency"
+  },
+  "rfcacheFdAvgWriteTime": {
+    "type" : "gauge",
+    "help": "Property rfcacheFdAvgWriteTime",
+    "name" : "rfcache_fd_write_latency"
+  },
+  "rfcachePoolSize": {
+    "type" : "gauge",
+    "help": "Property rfcachePoolSize",
+    "name" : "rfcache_pool_size"
+  },
+  "rfcachePoolReadHit": {
+    "type" : "counter",
+    "help": "Property rfcachePoolReadHit",
+    "name" : "rfcache_pool_read_hit"
+  },
+  "rfcachePoolEvictions": {
+    "type" : "gauge",
+    "help": "Property rfcachePoolEvictions",
+    "name" : "rfcache_pool_evictions"
+  },
   "userDataReadBwc": {
     "type" : "gauge",
     "help": "Property userDataReadBwc",

@@ -148,6 +148,14 @@
         "numOfStoragePools",
         "numOfFaultSets"
       ]
+    },
+    {
+      "type" : "RfcacheDevice",
+      "allIds" : "",
+      "properties": [
+        "rfcacheFdAvgReadTime",
+        "rfcacheFdAvgWriteTime"
+      ]
     }
   ]
 }

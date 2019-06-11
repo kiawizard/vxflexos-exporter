@@ -13,23 +13,29 @@ require 'pry' if gem_available?('pry')
 
 class VxFlexOSExporter
   def initialize
-    file = open("config.json") rescue raise('config file config.json is missing in the root folder of Vxf2Prom')
+    file = open("config.json") rescue raise('config file config.json is missing in the root folder of VxFlexOSExporter')
     json = file.read
     @config = JSON.parse(json) rescue raise('config file config.json has some syntax errors inside, please validate it')
 
-    file = open("metric_query_selection.json") rescue raise('config file metric_query_selection.json is missing in the root folder of Vxf2Prom')
+    file = open("metric_query_selection.json") rescue raise('config file metric_query_selection.json is missing in the root folder of VxFlexOSExporter')
     json = file.read
     @query = JSON.parse(json) rescue raise('config file metric_query_selection.json has some syntax errors inside, please validate it')
 
-    file = open("metric_definition.json") rescue raise('config file metric_definition.json is missing in the root folder of Vxf2Prom')
+    file = open("metric_definition.json") rescue raise('config file metric_definition.json is missing in the root folder of VxFlexOSExporter')
     json = file.read
     @defs = JSON.parse(json) rescue raise('config file metric_definition.json has some syntax errors inside, please validate it')
+
+    #file = open("properties_selected.json") rescue raise('config file properties_selected.json is missing in the root folder of VxFlexOSExporter')
+    #json = file.read
+    #@props = JSON.parse(json) rescue raise('config file properties_selected.json has some syntax errors inside, please validate it')
 
     server = TCPServer.new @config['prom']['listen_port']
 
     while session = server.accept
+      @stats_processed = []
       get_auth_token
       get_tree
+      process_tree
       get_stats
       process_stats
       convert_kb_iops
@@ -82,9 +88,13 @@ class VxFlexOSExporter
         raise 'Tree request failed: maybe the token expired?'
       else
         @tree = JSON.parse(response.body)
-        File.open('examples/tree.json', 'w') { |file| file.write(response.body) }
+        File.open('examples/tree.json', 'w') { |file| file.write(JSON.pretty_generate(@tree)) }
       end
     end
+  end
+
+  def process_tree
+    #binding.pry
   end
 
   def get_stats
@@ -104,13 +114,12 @@ class VxFlexOSExporter
           puts 'Stats request failed: maybe the token expired?'
         else
           @stats = JSON.parse(response.body)
-          File.open('examples/stats.json', 'w') { |file| file.write(response.body) }
+          File.open('examples/stats.json', 'w') { |file| file.write(JSON.pretty_generate(@stats)) }
         end
     end
   end
 
   def process_stats
-    @stats_processed = []
     @stats.each do |type, level1|
       tags = {clu_id: @tree['System']['id'], clu_name: @tree['System']['name']}
       if type != 'System'
@@ -148,6 +157,13 @@ class VxFlexOSExporter
             protection_domain_id = storage_pool['protectionDomainId']
             protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
             tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: storage_pool_id, sto_name: storage_pool['name'], sds_id: sds_id, sds_name: sds['name'], dev_id: device_id, dev_name: device['name'], dev_path: device['deviceCurrentPathName']})
+          elsif type == 'RfcacheDevice'
+            rfdevice = @tree['rfcacheDeviceList'].select{|dev| dev['id'] == device_id}.first
+            sds_id = rfdevice['sdsId']
+            sds = @tree['sdsList'].select{|sds| sds['id'] == sds_id}.first
+            protection_domain_id = sds['protectionDomainId']
+            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sds_id: sds_id, sds_name: sds['name'], rfdev_id: device_id, rfdev_name: rfdevice['name'], rfdev_path: rfdevice['deviceCurrentPathname']})
           end
           
           device_stats.each do |param, value|
