@@ -210,7 +210,7 @@
     "name" : "mapped_volumes"
   },
   "rfcacheReadsReceived": {
-    "type" : "gauge",
+    "type" : "counter",
     "help": "Property rfcacheReadsReceived",
     "name" : "rfcache_reads_rcvd"
   },

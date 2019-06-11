@@ -37,7 +37,11 @@
         "numOfVtrees",
         "numOfProtectionDomains",
         "numOfSdc",
-        "rfcacheReadsReceived"
+        "rfcacheReadsReceived",
+        "rfcacheWritesReceived",
+        "rfcachePoolSize",
+        "rfcachePoolReadHit",
+        "rfcachePoolEvictions"
       ]
     },
     {
@@ -120,9 +124,7 @@
         "avgReadSizeInBytes",
         "avgWriteSizeInBytes",
         "avgReadLatencyInMicrosec",
-        "avgWriteLatencyInMicrosec",
-        "totalReadBwc",
-        "totalWriteBwc"
+        "avgWriteLatencyInMicrosec"
       ]
     },
     {
