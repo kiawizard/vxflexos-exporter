@@ -88,7 +88,7 @@ class VxFlexOSExporter
         raise 'Tree request failed: maybe the token expired?'
       else
         @tree = JSON.parse(response.body)
-        File.open('examples/tree.json', 'w') { |file| file.write(JSON.pretty_generate(@tree)) }
+        File.open('examples/tree.json', 'w') { |file| file.write(JSON.pretty_generate(@tree)) } if File.exists? 'examples'
       end
     end
   end
@@ -114,7 +114,7 @@ class VxFlexOSExporter
           puts 'Stats request failed: maybe the token expired?'
         else
           @stats = JSON.parse(response.body)
-          File.open('examples/stats.json', 'w') { |file| file.write(JSON.pretty_generate(@stats)) }
+          File.open('examples/stats.json', 'w') { |file| file.write(JSON.pretty_generate(@stats)) } if File.exists? 'examples'
         end
     end
   end
