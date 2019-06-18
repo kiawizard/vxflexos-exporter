@@ -1,0 +1,24 @@
+{
+  "ProtectionDomain":
+  [
+    {  
+      "key": "protectionDomainState",
+      "type" : "gauge",
+      "help": "Property protectionDomainState",
+      "name": "protection_domain_state",
+      "values": {
+        "Active": 1,
+        "Inactive": 0
+      }
+    }
+  ],
+  "System":
+  [
+    {
+      "key": "sdcMdmNetworkDisconnectionsCounterParameters/shortWindow/windowSizeInSec",
+      "type" : "gauge",
+      "help": "Property shortWindowsSizeInSec",
+      "name": "system_short_window_size_in_sec"
+    }
+  ]
+}

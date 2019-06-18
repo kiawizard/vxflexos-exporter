@@ -25,11 +25,13 @@ class VxFlexOSExporter
     json = file.read
     @defs = JSON.parse(json) rescue raise('config file metric_definition.json has some syntax errors inside, please validate it')
 
-    #file = open("properties_selected.json") rescue raise('config file properties_selected.json is missing in the root folder of VxFlexOSExporter')
-    #json = file.read
-    #@props = JSON.parse(json) rescue raise('config file properties_selected.json has some syntax errors inside, please validate it')
+    if File.exists?('properties_selected.json')
+      file = open("properties_selected.json")
+      json = file.read
+      @props = JSON.parse(json) rescue raise('config file properties_selected.json has some syntax errors inside, please validate it')
+    end
 
-    server = TCPServer.new @config['prom']['listen_port']
+    server = TCPServer.new(@config['prom']['listen_ip'] || '0.0.0.0', @config['prom']['listen_port'])
 
     while session = server.accept
       @stats_processed = []
@@ -88,13 +90,41 @@ class VxFlexOSExporter
         raise 'Tree request failed: maybe the token expired?'
       else
         @tree = JSON.parse(response.body)
-        File.open('examples/tree.json', 'w') { |file| file.write(JSON.pretty_generate(@tree)) } if File.exists? 'examples'
+        File.open('examples/tree.json', 'w') { |file| file.write(JSON.pretty_generate(@tree)) } if File.exists?('examples')
       end
     end
   end
 
   def process_tree
-    #binding.pry
+    @props.each do |type, properties|
+      properties.each do |prop|
+        if type != 'System'
+          @tree[type[0, 1].downcase + type[1..-1] + 'List'].each do |value|
+            id = value['id']
+            prop['key'].split('/').each{|nextlevel| value = value[nextlevel]}
+            @stats_processed << {type: type,
+                                 param: prop['key'],
+                                 value: prop['values'][value] || value,
+                                 tags: get_tags(type, id),
+                                 display_name: prop['name'] || prop['key'].gsub(/(.)([A-Z])/,'\1_\2').downcase,
+                                 help: prop['help'],
+                                 promtype: prop['type']
+                                }
+          end
+        else
+          value = @tree['System']
+          prop['key'].split('/').each{|nextlevel| value = value[nextlevel]}
+          @stats_processed << {type: type,
+                               param: prop['key'],
+                               value: value,
+                               tags: get_tags(type),
+                               display_name: prop['name'] || prop['key'].gsub(/(.)([A-Z])/,'\1_\2').downcase,
+                               help: prop['help'],
+                               promtype: prop['type']
+                              }
+        end
+      end
+    end
   end
 
   def get_stats
@@ -114,76 +144,140 @@ class VxFlexOSExporter
           puts 'Stats request failed: maybe the token expired?'
         else
           @stats = JSON.parse(response.body)
-          File.open('examples/stats.json', 'w') { |file| file.write(JSON.pretty_generate(@stats)) } if File.exists? 'examples'
+          File.open('examples/stats.json', 'w') { |file| file.write(JSON.pretty_generate(@stats)) } if File.exists?('examples')
         end
     end
   end
 
+  def get_tags(type, device_id = nil)
+    tags = {clu_id: @tree['System']['id'],
+            clu_name: @tree['System']['name']}
+    if type == 'Sdc'
+      sdc = @tree['sdcList'].select{|sdc| sdc['id'] == device_id}.first
+      tags.merge!({sdc_id: device_id,
+                   sdc_name: sdc['name']})
+    elsif type == 'ProtectionDomain'
+      protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == device_id}.first
+      tags.merge!({pdo_id: device_id,
+                   pdo_name: protection_domain['name']})
+    elsif type == 'Sds'
+      protection_domain_id = @tree['sdsList'].first{|sds| sds.id == device_id}['protectionDomainId']
+      protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      sds = @tree['sdsList'].select{|sds| sds['id'] == device_id}.first
+      tags.merge!({pdo_id: protection_domain_id,
+                   pdo_name: protection_domain['name'],
+                   sds_id: device_id,
+                   sds_name: sds['name']})
+    elsif type == 'StoragePool'
+      protection_domain_id = @tree['storagePoolList'].first{|sto| sto.id == device_id}['protectionDomainId']
+      protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == device_id}.first
+      tags.merge!({pdo_id: protection_domain_id,
+                   pdo_name: protection_domain['name'],
+                   sto_id: device_id,
+                   sto_name: storage_pool['name']})
+    elsif type == 'Volume'
+      storage_pool_id = @tree['volumeList'].first{|vol| vol.id == device_id}['storagePoolId']
+      storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
+      protection_domain_id = storage_pool['protectionDomainId']
+      protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      volume = @tree['volumeList'].select{|vol| vol['id'] == device_id}.first
+      tags.merge!({pdo_id: protection_domain_id,
+                   pdo_name: protection_domain['name'],
+                   sto_id: storage_pool_id,
+                   sto_name: storage_pool['name'],
+                   vol_id: device_id,
+                   vol_name: volume['name']})
+    elsif type == 'Device'
+      device = @tree['deviceList'].select{|dev| dev['id'] == device_id}.first
+      storage_pool_id = device['storagePoolId']
+      storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
+      sds_id = device['sdsId']
+      sds = @tree['sdsList'].select{|sds| sds['id'] == sds_id}.first
+      protection_domain_id = storage_pool['protectionDomainId']
+      protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      tags.merge!({pdo_id: protection_domain_id,
+                   pdo_name: protection_domain['name'],
+                   sto_id: storage_pool_id,
+                   sto_name: storage_pool['name'],
+                   sds_id: sds_id,
+                   sds_name: sds['name'],
+                   dev_id: device_id,
+                   dev_name: device['name'],
+                   dev_path: device['deviceCurrentPathName']})
+    elsif type == 'RfcacheDevice'
+      rfdevice = @tree['rfcacheDeviceList'].select{|dev| dev['id'] == device_id}.first
+      sds_id = rfdevice['sdsId']
+      sds = @tree['sdsList'].select{|sds| sds['id'] == sds_id}.first
+      protection_domain_id = sds['protectionDomainId']
+      protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      tags.merge!({pdo_id: protection_domain_id,
+                   pdo_name: protection_domain['name'],
+                   sds_id: sds_id,
+                   sds_name: sds['name'],
+                   rfdev_id: device_id,
+                   rfdev_name: rfdevice['name'],
+                   rfdev_path: rfdevice['deviceCurrentPathname']})
+    end
+    tags
+  end
+
   def process_stats
     @stats.each do |type, level1|
-      tags = {clu_id: @tree['System']['id'], clu_name: @tree['System']['name']}
       if type != 'System'
         level1.each do |device_id, device_stats|
-          tags = {clu_id: @tree['System']['id'], clu_name: @tree['System']['name']}
-          if type == 'Sdc'
-            sdc = @tree['sdcList'].select{|sdc| sdc['id'] == device_id}.first
-            tags.merge!({sdc_id: device_id, sdc_name: sdc['name']})
-          elsif type == 'ProtectionDomain'
-            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == device_id}.first
-            tags.merge!({pdo_id: device_id, pdo_name: protection_domain['name']})
-          elsif type == 'Sds'
-            protection_domain_id = @tree['sdsList'].first{|sds| sds.id == device_id}['protectionDomainId']
-            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-            sds = @tree['sdsList'].select{|sds| sds['id'] == device_id}.first
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sds_id: device_id, sds_name: sds['name']})
-          elsif type == 'StoragePool'
-            protection_domain_id = @tree['storagePoolList'].first{|sto| sto.id == device_id}['protectionDomainId']
-            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-            storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == device_id}.first
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: device_id, sto_name: storage_pool['name']})
-          elsif type == 'Volume'
-            storage_pool_id = @tree['volumeList'].first{|vol| vol.id == device_id}['storagePoolId']
-            storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
-            protection_domain_id = storage_pool['protectionDomainId']
-            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-            volume = @tree['volumeList'].select{|vol| vol['id'] == device_id}.first
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: storage_pool_id, sto_name: storage_pool['name'], vol_id: device_id, vol_name: volume['name']})
-          elsif type == 'Device'
-            device = @tree['deviceList'].select{|dev| dev['id'] == device_id}.first
-            storage_pool_id = device['storagePoolId']
-            storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
-            sds_id = device['sdsId']
-            sds = @tree['sdsList'].select{|sds| sds['id'] == sds_id}.first
-            protection_domain_id = storage_pool['protectionDomainId']
-            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sto_id: storage_pool_id, sto_name: storage_pool['name'], sds_id: sds_id, sds_name: sds['name'], dev_id: device_id, dev_name: device['name'], dev_path: device['deviceCurrentPathName']})
-          elsif type == 'RfcacheDevice'
-            rfdevice = @tree['rfcacheDeviceList'].select{|dev| dev['id'] == device_id}.first
-            sds_id = rfdevice['sdsId']
-            sds = @tree['sdsList'].select{|sds| sds['id'] == sds_id}.first
-            protection_domain_id = sds['protectionDomainId']
-            protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-            tags.merge!({pdo_id: protection_domain_id, pdo_name: protection_domain['name'], sds_id: sds_id, sds_name: sds['name'], rfdev_id: device_id, rfdev_name: rfdevice['name'], rfdev_path: rfdevice['deviceCurrentPathname']})
-          end
-          
           device_stats.each do |param, value|
-            @stats_processed << {type: type, param: param, value: value, tags: tags}
+            @stats_processed << {type: type, 
+                                 param: param,
+                                 value: value,
+                                 tags: get_tags(type, device_id),
+                                 display_name: (@defs[param]['name'] ? @defs[param]['name'] : param.gsub(/(.)([A-Z])/,'\1_\2').downcase),
+                                 help: @defs[param]['help'],
+                                 promtype: @defs[param]['type']
+                                }
           end
         end
       else
         level1.each do |param, value|
-          @stats_processed << {type: type, param: param, value: value, tags: tags}
+          @stats_processed << {type: type,
+                               param: param,
+                               value: value,
+                               tags: get_tags(type),
+                               display_name: (@defs[param]['name'] || param.gsub(/(.)([A-Z])/,'\1_\2').downcase),
+                               help: @defs[param]['help'],
+                               promtype: @defs[param]['type']
+                              }
         end
       end
     end
+  end
+
+  def replace_name_with_definition(name)
+    
   end
 
   def convert_kb_iops
     conv = []
     @stats_processed.each do |row|
       if row[:value].is_a?(Hash)
-        conv << {type: row[:type], param: row[:param], postfix: 'iops', value: (row[:value]['numSeconds'] > 0 ? row[:value]['numOccured']/row[:value]['numSeconds'] : 0), tags: row[:tags]}
-        conv << {type: row[:type], param: row[:param], postfix: 'kb', value: (row[:value]['numSeconds'] > 0 ? row[:value]['totalWeightInKb']/row[:value]['numSeconds'] : 0), tags: row[:tags]}
+        conv << {type: row[:type],
+                 param: row[:param],
+                 postfix: 'iops',
+                 value: (row[:value]['numSeconds'] > 0 ? row[:value]['numOccured']/row[:value]['numSeconds'] : 0),
+                 tags: row[:tags],
+                 display_name: row[:display_name],
+                 help: row[:help],
+                 promtype: row[:promtype]
+                }
+        conv << {type: row[:type],
+                 param: row[:param],
+                 postfix: 'kb',
+                 value: (row[:value]['numSeconds'] > 0 ? row[:value]['totalWeightInKb']/row[:value]['numSeconds'] : 0),
+                 tags: row[:tags],
+                 display_name: row[:display_name],
+                 help: row[:help],
+                 promtype: row[:promtype]
+                }
       else
         conv << row
       end
@@ -193,16 +287,10 @@ class VxFlexOSExporter
 
   def output_stats(target)
     @stats_processed.group_by{|s| s[:type]+s[:param]+(s[:postfix] || '')}.each do |group, rows|
-      param_prom_name = rows[0][:param].gsub(/(.)([A-Z])/,'\1_\2').downcase+
-      path_str = ''
-      if @defs[rows[0][:param]]
-        param_prom_name = @defs[rows[0][:param]]['name'] if @defs[rows[0][:param]]['name']
-        path_str = (@config['prom']['prefix'] || '') + rows[0][:type].downcase + '_' + param_prom_name + (rows[0][:postfix] ? '_'+rows[0][:postfix] : '')
-        target.print "# HELP #{path_str} #{@defs[rows[0][:param]]['help']}" + "\r\n" if @defs[rows[0][:param]]['help']
-        target.print "# TYPE #{path_str} #{@defs[rows[0][:param]]['type']}" + "\r\n" if @defs[rows[0][:param]]['type']
-        @defs[rows[0][:param]]['used'] = true
-      end
-
+      path_str = (@config['prom']['prefix'] || '') + rows[0][:type].downcase + '_' + rows[0][:display_name] + (rows[0][:postfix] ? '_'+rows[0][:postfix] : '')
+      target.print "# HELP #{path_str} #{rows[0][:help]}" + "\r\n" if rows[0][:help]
+      target.print "# TYPE #{path_str} #{rows[0][:promtype]}" + "\r\n" if rows[0][:promtype]
+      
       rows.each do |row|
         tags_str = '{' + row[:tags].map{|t,v| t.to_s + '="' + v + '"'}.join(',') + '}'
         target.print path_str + tags_str + ' ' + row[:value].to_s + "\r\n"
