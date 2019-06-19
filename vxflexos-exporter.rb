@@ -47,11 +47,28 @@ class VxFlexOSExporter
       request = session.gets
       puts request
 
-      session.print "HTTP/1.1 200\r\n" # 1
-      session.print "Content-Type: text/plaintext\r\n" # 2
-      session.print "\r\n" # 3
-      output_stats(session)
-
+      if request.split(' ')[1] == '/'
+        session.print "HTTP/1.1 200\r\n"
+        session.print "Content-Type: text/html\r\n"
+        session.print "\r\n"
+        session.print '<html>
+            <head><title>VXFlexOS Exporter</title></head>
+            <body>
+              <h1>VXFlexOS Exporter</h1>
+              <p><a href="/metrics">Metrics</a></p>
+            </body>
+          </html>'
+      elsif request.split(' ')[1] == '/metrics'
+        session.print "HTTP/1.1 200\r\n"
+        session.print "Content-Type: text/plaintext\r\n"
+        session.print "\r\n"
+        output_stats(session)
+      else
+        session.print "HTTP/1.1 404\r\n"
+        session.print "Content-Type: text/plaintext\r\n"
+        session.print "\r\n"
+        session.print "Not Found! VXFlexOS Exporter only listens on /metrics"
+      end
       session.close
     end
   end
@@ -101,7 +118,7 @@ class VxFlexOSExporter
     @props.each do |type, properties|
       properties.each do |prop|
         if type != 'System'
-          raise "Unexpected type #{type}, #{type[0, 1].downcase + type[1..-1] + 'List'} is missing th the Tree" if !@tree[type[0, 1].downcase + type[1..-1] + 'List']
+          raise "Unexpected type #{type}, #{type[0, 1].downcase + type[1..-1] + 'List'} is missing in the Tree" if !@tree[type[0, 1].downcase + type[1..-1] + 'List']
           @tree[type[0, 1].downcase + type[1..-1] + 'List'].each do |value|
             id = value['id']
             prop['key'].split('/').each{|nextlevel| value = value[nextlevel]}
@@ -287,12 +304,12 @@ class VxFlexOSExporter
   def output_stats(target)
     @stats_processed.group_by{|s| s[:type]+s[:param]+(s[:postfix] || '')}.each do |group, rows|
       path_str = (@config['prom']['prefix'] || '') + rows[0][:type].downcase + '_' + rows[0][:display_name] + (rows[0][:postfix] ? '_'+rows[0][:postfix] : '')
-      target.print "# HELP #{path_str} #{rows[0][:help]}" + "\r\n" if rows[0][:help]
-      target.print "# TYPE #{path_str} #{rows[0][:promtype]}" + "\r\n" if rows[0][:promtype]
+      target.print "# HELP #{path_str} #{rows[0][:help]}" + "\n" if rows[0][:help]
+      target.print "# TYPE #{path_str} #{rows[0][:promtype]}" + "\n" if rows[0][:promtype]
       
       rows.each do |row|
         tags_str = '{' + row[:tags].map{|t,v| t.to_s + '="' + v + '"'}.join(',') + '}'
-        target.print path_str + tags_str + ' ' + row[:value].to_s + "\r\n"
+        target.print path_str + tags_str + ' ' + row[:value].to_s + "\n"
       end
     end
   end
