@@ -6,6 +6,7 @@
     "pass" : "qwerty"
   },
   "prom": {
+    "listen_ip" : "0.0.0.0",
     "listen_port" : 9187,
     "prefix" : "vxf_"
   }
