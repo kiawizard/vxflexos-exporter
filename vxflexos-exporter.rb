@@ -170,8 +170,8 @@ class VxFlexOSExporter
   end
 
   def get_tags(type, device_id = nil)
-    tags = {clu_id: @tree['System']['id'],
-            clu_name: @tree['System']['name']}
+    tags = {sys_id: @tree['System']['id'],
+            sys_name: @tree['System']['name']}
     if type == 'Sdc'
       sdc = @tree['sdcList'].select{|sdc| sdc['id'] == device_id}.first
       tags.merge!({sdc_id: device_id,
@@ -194,8 +194,8 @@ class VxFlexOSExporter
       storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == device_id}.first
       tags.merge!({pdo_id: protection_domain_id,
                    pdo_name: protection_domain['name'],
-                   sto_id: device_id,
-                   sto_name: storage_pool['name']})
+                   stp_id: device_id,
+                   stp_name: storage_pool['name']})
     elsif type == 'Volume'
       storage_pool_id = @tree['volumeList'].first{|vol| vol.id == device_id}['storagePoolId']
       storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
@@ -204,8 +204,8 @@ class VxFlexOSExporter
       volume = @tree['volumeList'].select{|vol| vol['id'] == device_id}.first
       tags.merge!({pdo_id: protection_domain_id,
                    pdo_name: protection_domain['name'],
-                   sto_id: storage_pool_id,
-                   sto_name: storage_pool['name'],
+                   stp_id: storage_pool_id,
+                   stp_name: storage_pool['name'],
                    vol_id: device_id,
                    vol_name: volume['name']})
     elsif type == 'Device'
@@ -218,8 +218,8 @@ class VxFlexOSExporter
       protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
       tags.merge!({pdo_id: protection_domain_id,
                    pdo_name: protection_domain['name'],
-                   sto_id: storage_pool_id,
-                   sto_name: storage_pool['name'],
+                   stp_id: storage_pool_id,
+                   stp_name: storage_pool['name'],
                    sds_id: sds_id,
                    sds_name: sds['name'],
                    dev_id: device_id,

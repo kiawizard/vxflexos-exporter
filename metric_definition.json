@@ -210,7 +210,7 @@
     "name" : "mapped_volumes"
   },
   "rfcacheReadsReceived": {
-    "type" : "gauge",
+    "type" : "counter",
     "help": "Property rfcacheReadsReceived",
     "name" : "rfcache_reads_rcvd"
   },
@@ -240,7 +240,7 @@
     "name" : "rfcache_pool_read_hit"
   },
   "rfcachePoolEvictions": {
-    "type" : "gauge",
+    "type" : "counter",
     "help": "Property rfcachePoolEvictions",
     "name" : "rfcache_pool_evictions"
   },
@@ -257,12 +257,12 @@
   "avgReadLatencyInMicrosec": {
     "type" : "gauge",
     "help": "Property avgReadLatencyInMicrosec",
-    "name" : "read_latency_ms"
+    "name" : "read_latency_microseconds"
   },
   "avgWriteLatencyInMicrosec": {
     "type" : "gauge",
     "help": "Property avgWriteLatencyInMicrosec",
-    "name" : "write_latency_ms"
+    "name" : "write_latency_microseconds"
   },
   "avgReadSizeInBytes": {
     "type" : "gauge",
