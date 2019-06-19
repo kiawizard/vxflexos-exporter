@@ -1,15 +1,43 @@
 {
   "ProtectionDomain":
   [
-    {  
+    {
       "key": "protectionDomainState",
-      "type" : "gauge",
+      "type": "gauge",
       "help": "Property protectionDomainState",
-      "name": "protection_domain_state",
+      "name": "pd_state",
       "values": {
         "Active": 1,
         "Inactive": 0
       }
+    },
+    {
+      "key": "rfcacheEnabled",
+      "type": "gauge",
+      "help": "Property rfcacheEnabled",
+      "name": "rfcache_enabled",
+      "values": {
+        "true": 0,
+        "false": 1
+      }
+    },
+    {
+      "key": "rfcacheOpertionalMode",
+      "type": "gauge",
+      "help": "Property rfcacheOpertionalMode",
+      "name": "rfcache_opmode",
+      "values": {
+        "Read": 0,
+        "Write": 1,
+        "ReadAndWrite": 2,
+        "WriteMiss": 3
+      }
+    },
+    {
+      "key": "rfcachePageSizeKb",
+      "type": "gauge",
+      "help": "Property rfcachePageSizeKb",
+      "name": "rfcache_pagesize_kb"
     }
   ],
   "System":

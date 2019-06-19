@@ -101,12 +101,13 @@ class VxFlexOSExporter
     @props.each do |type, properties|
       properties.each do |prop|
         if type != 'System'
+          raise "Unexpected type #{type}, #{type[0, 1].downcase + type[1..-1] + 'List'} is missing th the Tree" if !@tree[type[0, 1].downcase + type[1..-1] + 'List']
           @tree[type[0, 1].downcase + type[1..-1] + 'List'].each do |value|
             id = value['id']
             prop['key'].split('/').each{|nextlevel| value = value[nextlevel]}
             @stats_processed << {type: type,
                                  param: prop['key'],
-                                 value: prop['values'][value] || value,
+                                 value: prop['values'] ? prop['values'][value.to_s] : value,
                                  tags: get_tags(type, id),
                                  display_name: prop['name'] || prop['key'].gsub(/(.)([A-Z])/,'\1_\2').downcase,
                                  help: prop['help'],
@@ -118,7 +119,7 @@ class VxFlexOSExporter
           prop['key'].split('/').each{|nextlevel| value = value[nextlevel]}
           @stats_processed << {type: type,
                                param: prop['key'],
-                               value: value,
+                               value: prop['values'] ? prop['values'][value.to_s] : value,
                                tags: get_tags(type),
                                display_name: prop['name'] || prop['key'].gsub(/(.)([A-Z])/,'\1_\2').downcase,
                                help: prop['help'],
@@ -252,10 +253,6 @@ class VxFlexOSExporter
         end
       end
     end
-  end
-
-  def replace_name_with_definition(name)
-    
   end
 
   def convert_kb_iops
