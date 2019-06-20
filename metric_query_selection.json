@@ -6,6 +6,8 @@
       "properties": [
         "maxCapacityInKb",
         "capacityInUseInKb",
+        "unreachableUnusedCapacityInKb",
+        "unusedCapacityInKb",
         "spareCapacityInKb",
         "capacityAvailableForVolumeAllocationInKb",
         "protectedCapacityInKb",
