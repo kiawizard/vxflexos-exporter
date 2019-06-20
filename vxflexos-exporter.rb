@@ -36,39 +36,43 @@ class VxFlexOSExporter
     server = TCPServer.new(@config['prom']['listen_ip'] || '0.0.0.0', @config['prom']['listen_port'])
 
     while session = server.accept
-      @stats_processed = []
-      get_auth_token
-      get_tree
-      process_tree
-      get_stats
-      process_stats
-      convert_kb_iops
-
       request = session.gets
-      puts request
 
-      if request.split(' ')[1] == '/'
-        session.print "HTTP/1.1 200\r\n"
-        session.print "Content-Type: text/html\r\n"
-        session.print "\r\n"
-        session.print '<html>
-            <head><title>VXFlexOS Exporter</title></head>
-            <body>
-              <h1>VXFlexOS Exporter</h1>
-              <p><a href="/metrics">Metrics</a></p>
-            </body>
-          </html>'
-      elsif request.split(' ')[1] == '/metrics'
-        session.print "HTTP/1.1 200\r\n"
-        session.print "Content-Type: text/plaintext\r\n"
-        session.print "\r\n"
-        output_stats(session)
-      else
-        session.print "HTTP/1.1 404\r\n"
-        session.print "Content-Type: text/plaintext\r\n"
-        session.print "\r\n"
-        session.print "Not Found! VXFlexOS Exporter only listens on /metrics"
+      if request && (parts = request.split(' ')) && parts.size > 1
+        puts request
+        if parts[1] == '/'
+          session.print "HTTP/1.1 200\r\n"
+          session.print "Content-Type: text/html\r\n"
+          session.print "\r\n"
+          session.print '<html>
+              <head><title>VXFlexOS Exporter</title></head>
+              <body>
+                <h1>VXFlexOS Exporter</h1>
+                <p><a href="/metrics">Metrics</a></p>
+              </body>
+            </html>'
+        elsif parts[1] == '/metrics'
+          session.print "HTTP/1.1 200\r\n"
+          session.print "Content-Type: text/plaintext\r\n"
+          session.print "\r\n"
+
+          @stats_processed = []
+          get_auth_token
+          get_tree
+          process_tree
+          get_stats
+          process_stats
+          convert_kb_iops
+
+          output_stats(session)
+        else
+          session.print "HTTP/1.1 404\r\n"
+          session.print "Content-Type: text/plaintext\r\n"
+          session.print "\r\n"
+          session.print "Not Found! VXFlexOS Exporter only listens on /metrics"
+        end
       end
+
       session.close
     end
   end
