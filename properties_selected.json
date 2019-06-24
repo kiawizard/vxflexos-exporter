@@ -48,5 +48,14 @@
       "help": "Property shortWindowsSizeInSec",
       "name": "system_short_window_size_in_sec"
     }
+  ],
+  "Volume":
+  [
+    {
+      "key": "sizeInKb",
+      "type": "gauge",
+      "help": "Property volumeSizeInKb",
+      "name": "size_kb"
+    }
   ]
 }
