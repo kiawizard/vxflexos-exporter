@@ -189,7 +189,7 @@ class VxFlexOSExporter
       tags.merge!({pdo_id: device_id,
                    pdo_name: protection_domain['name']})
     elsif type == 'Sds'
-      protection_domain_id = @tree['sdsList'].first{|sds| sds.id == device_id}['protectionDomainId']
+      protection_domain_id = @tree['sdsList'].select{|sds| sds['id'] == device_id}.first['protectionDomainId']
       protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
       sds = @tree['sdsList'].select{|sds| sds['id'] == device_id}.first
       tags.merge!({pdo_id: protection_domain_id,
@@ -197,7 +197,7 @@ class VxFlexOSExporter
                    sds_id: device_id,
                    sds_name: sds['name']})
     elsif type == 'StoragePool'
-      protection_domain_id = @tree['storagePoolList'].first{|sto| sto.id == device_id}['protectionDomainId']
+      protection_domain_id = @tree['storagePoolList'].select{|sto| sto['id'] == device_id}.first['protectionDomainId']
       protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
       storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == device_id}.first
       tags.merge!({pdo_id: protection_domain_id,
@@ -205,7 +205,7 @@ class VxFlexOSExporter
                    stp_id: device_id,
                    stp_name: storage_pool['name']})
     elsif type == 'Volume'
-      storage_pool_id = @tree['volumeList'].first{|vol| vol.id == device_id}['storagePoolId']
+      storage_pool_id = @tree['volumeList'].select{|vol| vol['id'] == device_id}.first['storagePoolId']
       storage_pool = @tree['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
       protection_domain_id = storage_pool['protectionDomainId']
       protection_domain = @tree['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
