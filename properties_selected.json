@@ -182,5 +182,14 @@
       "help": "Property mdmCluster/goodReplicasNum",
       "name": "mdm_cluster_good_replicas"
     }
+  ],
+  "Volume":
+  [
+    {
+      "key": "sizeInKb",
+      "type": "gauge",
+      "help": "Property volumeSizeInKb",
+      "name": "size_kb"
+    }
   ]
 }
