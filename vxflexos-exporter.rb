@@ -76,7 +76,7 @@ class VxFlexOSExporter
                   session.print "HTTP/1.1 500\r\n"
                   session.print "Content-Type: text/plaintext\r\n"
                   session.print "\r\n"
-                  session.print "An exception raised while communicating with VXFlesOS: #{e}"
+                  session.print "An exception raised while communicating with VXFlexOS: #{e}"
                 end
               else
                 session.print "HTTP/1.1 404\r\n"
