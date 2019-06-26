@@ -9,6 +9,11 @@
     "help": "Property capacityInUseInKb",
     "name" : "capacity_use_kb"
   },
+  "unreachableUnusedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Property unreachableUnusedCapacityInKb",
+    "name" : "capacity_unreachable_unused_kb"
+  },
   "unusedCapacityInKb": {
     "type" : "gauge",
     "help": "Property unusedCapacityInKb",
