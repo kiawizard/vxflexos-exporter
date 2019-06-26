@@ -90,6 +90,7 @@
       "properties": [
         "maxCapacityInKb",
         "capacityInUseInKb",
+        "unreachableUnusedCapacityInKb",
         "unusedCapacityInKb",
         "spareCapacityInKb",
         "capacityAvailableForVolumeAllocationInKb",
@@ -97,7 +98,11 @@
         "degradedHealthyCapacityInKb",
         "degradedFailedCapacityInKb",
         "failedCapacityInKb",
+        "semiProtectedCapacityInKb",
         "movingCapacityInKb",
+        "fwdRebuildCapacityInKb",
+        "bckRebuildCapacityInKb",
+        "rebalanceCapacityInKb",
         "fixedReadErrorCount",
         "fwdRebuildReadBwc",
         "fwdRebuildWriteBwc",
@@ -133,6 +138,19 @@
       "type" : "ProtectionDomain",
       "allIds" : "",
       "properties": [
+        "maxCapacityInKb",
+        "capacityInUseInKb",
+        "unreachableUnusedCapacityInKb",
+        "unusedCapacityInKb",
+        "spareCapacityInKb",
+        "protectedCapacityInKb",
+        "degradedHealthyCapacityInKb",
+        "degradedFailedCapacityInKb",
+        "failedCapacityInKb",
+        "semiProtectedCapacityInKb",
+        "fwdRebuildCapacityInKb",
+        "bckRebuildCapacityInKb",
+        "rebalanceCapacityInKb",
         "fixedReadErrorCount",
         "fwdRebuildReadBwc",
         "fwdRebuildWriteBwc",
@@ -150,7 +168,8 @@
         "numOfVolumesInDeletion",
         "numOfSds",
         "numOfStoragePools",
-        "numOfFaultSets"
+        "numOfFaultSets",
+        "rfcachePoolSize"
       ]
     },
     {

@@ -136,6 +136,15 @@
       }
     }
   ],
+  "Volume":
+  [
+    {
+      "key": "sizeInKb",
+      "type": "gauge",
+      "help": "Property sizeInKb",
+      "name": "size_kb"
+    }
+  ],
   "System":
   [
     {
