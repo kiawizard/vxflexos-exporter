@@ -1,13 +1,18 @@
 {
-  "vxf": {
-    "host" : "vxflexhost.domain.com",
+  "vxflexhost-1": {
+    "host" : "vxflexhost-1.domain.com",
     "port": 443,
     "user": "admin",
-    "pass" : "qwerty"
-  },
-  "prom": {
+    "pass" : "qwerty",
     "listen_ip" : "0.0.0.0",
-    "listen_port" : 9187,
-    "prefix" : "vxf_"
+    "listen_port" : 9187
+  },
+  "vxflexhost-2": {
+    "host" : "vxflexhost-2.domain.com",
+    "port": 8123,
+    "user": "admin",
+    "pass" : "ytrewq",
+    "listen_ip" : "0.0.0.0",
+    "listen_port" : 9188
   }
 }
