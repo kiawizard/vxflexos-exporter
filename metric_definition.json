@@ -119,6 +119,36 @@
     "help": "Property totalWriteBwc",
     "name" : "write_total"
   },
+  "userDataReadBwc": {
+    "type" : "gauge",
+    "help": "Property userDataReadBwc",
+    "name" : "user_data_read"
+  },
+  "userDataWriteBwc": {
+    "type" : "gauge",
+    "help": "Property userDataWriteBwc",
+    "name" : "user_data_write"
+  },
+  "userDataTrimBwc": {
+    "type" : "gauge",
+    "help": "Property userDataTrimBwc",
+    "name" : "user_data_trim"
+  },
+  "userDataSdcReadLatency": {
+    "type" : "gauge",
+    "help": "Property userDataSdcReadLatency",
+    "name" : "user_data_sdc_read_latency_microseconds"
+  },
+  "userDataSdcWriteLatency": {
+    "type" : "gauge",
+    "help": "Property userDataSdcWriteLatency",
+    "name" : "user_data_sdc_write_latency_microseconds"
+  },
+  "userDataSdcTrimLatency": {
+    "type" : "gauge",
+    "help": "Property userDataSdcTrimLatency",
+    "name" : "user_data_sdc_trim_latency_microseconds"
+  },
   "numOfUnmappedVolumes": {
     "type" : "gauge",
     "help": "Property numOfUnmappedVolumes",
@@ -189,6 +219,11 @@
     "help": "Property numOfFaultSets",
     "name" : "num_fault_sets"
   },
+  "numOfAccelerationPools": {
+    "type" : "gauge",
+    "help": "Property numOfAccelerationPools",
+    "name" : "num_acceleration_pools"
+  },
   "numOfRfcacheDevices": {
     "type" : "gauge",
     "help": "Property numOfRfcacheDevices",
@@ -214,6 +249,21 @@
     "help": "Property numOfMappedVolumes",
     "name" : "mapped_volumes"
   },
+  "rmcacheSizeInKb": {
+    "type" : "gauge",
+    "help": "Property rmcacheSizeInKb",
+    "name" : "rmcache_size_kb"
+  },
+  "rmcacheSizeInUseInKb": {
+    "type" : "gauge",
+    "help": "Property rmcacheSizeInUseInKb",
+    "name" : "rmcache_size_inuse_kb"
+  },
+  "compressionRatio": {
+    "type" : "gauge",
+    "help": "Property compressionRatio",
+    "name" : "compression_ratio"
+  },
   "rfcacheReadsReceived": {
     "type" : "counter",
     "help": "Property rfcacheReadsReceived",
@@ -223,6 +273,56 @@
     "type" : "counter",
     "help": "Property rfcacheWritesReceived",
     "name" : "rfcache_writes_rcvd"
+  },
+  "rfcacheReadHit": {
+    "type" : "counter",
+    "help": "Property rfcacheReadHit",
+    "name" : "rfcache_read_hit"
+  },
+  "rfcacheReadMiss": {
+    "type" : "counter",
+    "help": "Property rfcacheReadMiss",
+    "name" : "rfcache_read_miss"
+  },
+  "rfcacheWriteHit": {
+    "type" : "counter",
+    "help": "Property rfcacheWriteHit",
+    "name" : "rfcache_write_hit"
+  },
+  "rfcacheWriteMiss": {
+    "type" : "counter",
+    "help": "Property rfcacheWriteMiss",
+    "name" : "rfcache_write_miss"
+  },
+  "rfcacheIosSkipped": {
+    "type" : "counter",
+    "help": "Property rfcacheIosSkipped",
+    "name" : "rfcache_ios_skipped"
+  },
+  "rfcacheReadsSkipped": {
+    "type" : "counter",
+    "help": "Property rfcacheReadsSkipped",
+    "name" : "rfcache_reads_skipped"
+  },
+  "rfcacheIoErrors": {
+    "type" : "counter",
+    "help": "Property rfcacheIoErrors",
+    "name" : "rfcache_io_errors"
+  },
+  "rfcacheReadsFromCache": {
+    "type" : "counter",
+    "help": "Property rfcacheReadsFromCache",
+    "name" : "rfcache_reads_from_cache"
+  },
+  "rfcacheFdInflightReads": {
+    "type" : "counter",
+    "help": "Property rfcacheFdInflightReads",
+    "name" : "rfcache_fd_inflight_reads"
+  },
+  "rfcacheFdInflightWrites": {
+    "type" : "counter",
+    "help": "Property rfcacheFdInflightWrites",
+    "name" : "rfcache_fd_inflight_writes"
   },
   "rfcacheFdAvgReadTime": {
     "type" : "gauge",
@@ -249,15 +349,30 @@
     "help": "Property rfcachePoolEvictions",
     "name" : "rfcache_pool_evictions"
   },
-  "userDataReadBwc": {
+  "thinAndSnapshotRatio": {
     "type" : "gauge",
-    "help": "Property userDataReadBwc",
-    "name" : "read_user_data"
+    "help": "Property thinAndSnapshotRatio",
+    "name" : "thin_and_snapshot_ratio"
   },
-  "userDataWriteBwc": {
+  "overallUsageRatio": {
     "type" : "gauge",
-    "help": "Property userDataWriteBwc",
-    "name" : "write_user_data"
+    "help": "Property overallUsageRatio",
+    "name" : "overall_usage_ratio"
+  },
+  "compressedDataCompressionRatio": {
+    "type" : "gauge",
+    "help": "Property compressedDataCompressionRatio",
+    "name" : "compressed_data_compression_ratio"
+  },
+  "numSdsReconnections": {
+    "type" : "counter",
+    "help": "Property numSdsReconnections",
+    "name" : "num_sds_reconnections"
+  },
+  "numSdSdcDisconnections": {
+    "type" : "counter",
+    "help": "Property numSdSdcDisconnections",
+    "name" : "num_sds_sdc_disconnections"
   },
   "avgReadLatencyInMicrosec": {
     "type" : "gauge",
@@ -268,15 +383,5 @@
     "type" : "gauge",
     "help": "Property avgWriteLatencyInMicrosec",
     "name" : "write_latency_microseconds"
-  },
-  "avgReadSizeInBytes": {
-    "type" : "gauge",
-    "help": "Property avgReadSizeInBytes",
-    "name" : "read_size_bytes"
-  },
-  "avgWriteSizeInBytes": {
-    "type" : "gauge",
-    "help": "Property avgWriteSizeInBytes",
-    "name" : "write_size_bytes"
   }
 }

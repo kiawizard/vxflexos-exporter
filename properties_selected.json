@@ -1,195 +1,603 @@
 {
-  "ProtectionDomain":
-  [
-    {
-      "key": "protectionDomainState",
-      "type": "gauge",
-      "help": "Property protectionDomainState",
-      "name": "pd_state",
-      "values": {
-        "Active": 1,
-        "Inactive": 0
+  "v2": {
+    "System":
+    [
+      {
+        "key": "mdmCluster/clusterMode",
+        "type": "gauge",
+        "help": "Property mdmCluster/clusterMode",
+        "name": "mdm_cluster_nodes",
+        "values": {
+          "Invalid": 0,
+          "OneNode": 1,
+          "ThreeNodes": 3,
+          "FiveNodes": 5
+        }
+      },
+      {
+        "key": "mdmCluster/clusterState",
+        "type": "gauge",
+        "help": "Property mdmCluster/clusterState",
+        "name": "mdm_cluster_state",
+        "values": {
+          "ClusteredNormal": 0,
+          "ClusteredDegraded": 1,
+          "Invalid": 2
+        }
+      },
+      {
+        "key": "mdmCluster/goodNodesNum",
+        "type": "gauge",
+        "help": "Property mdmCluster/goodNodesNum",
+        "name": "mdm_cluster_good_nodes"
+      },
+      {
+        "key": "mdmCluster/goodReplicasNum",
+        "type": "gauge",
+        "help": "Property mdmCluster/goodReplicasNum",
+        "name": "mdm_cluster_good_replicas"
       }
-    },
-    {
-      "key": "rfcacheEnabled",
-      "type": "gauge",
-      "help": "Property rfcacheEnabled",
-      "name": "rfcache_enabled",
-      "values": {
-        "true": 1,
-        "false": 0
+    ],
+    "ProtectionDomain":
+    [
+      {
+        "key": "protectionDomainState",
+        "type": "gauge",
+        "help": "Property protectionDomainState",
+        "name": "pd_state",
+        "values": {
+          "Active": 1,
+          "Inactive": 0
+        }
+      },
+      {
+        "key": "rfcacheEnabled",
+        "type": "gauge",
+        "help": "Property rfcacheEnabled",
+        "name": "rfcache_enabled",
+        "values": {
+          "true": 1,
+          "false": 0
+        }
+      },
+      {
+        "key": "rfcachePageSizeKb",
+        "type": "gauge",
+        "help": "Property rfcachePageSizeKb",
+        "name": "rfcache_pagesize_kb"
+      },
+      {
+        "key": "rfcacheMaxIoSizeKb",
+        "type": "gauge",
+        "help": "Property rfcacheMaxIoSizeKb",
+        "name": "rfcache_maxiosize_kb"
+      },
+      {
+        "key": "rfcacheOpertionalMode",
+        "type": "gauge",
+        "help": "Property rfcacheOpertionalMode",
+        "name": "rfcache_opmode",
+        "values": {
+          "Read": 0,
+          "Write": 1,
+          "ReadAndWrite": 2,
+          "WriteMiss": 3
+        }
       }
-    },
-    {
-      "key": "rfcachePageSizeKb",
-      "type": "gauge",
-      "help": "Property rfcachePageSizeKb",
-      "name": "rfcache_pagesize_kb"
-    },
-    {
-      "key": "rfcacheMaxIoSizeKb",
-      "type": "gauge",
-      "help": "Property rfcacheMaxIoSizeKb",
-      "name": "rfcache_maxiosize_kb"
-    },
-    {
-      "key": "rfcacheOpertionalMode",
-      "type": "gauge",
-      "help": "Property rfcacheOpertionalMode",
-      "name": "rfcache_opmode",
-      "values": {
-        "Read": 0,
-        "Write": 1,
-        "ReadAndWrite": 2,
-        "WriteMiss": 3
+    ],
+    "Sds":
+    [
+      {
+        "key": "membershipState",
+        "type": "gauge",
+        "help": "Property membershipState",
+        "name": "membership_state",
+        "values": {
+          "Joined": 0,
+          "Decoupled": 1,
+          "JoinPending": 2
+        }
+      },
+      {
+        "key": "rmcacheEnabled",
+        "type": "gauge",
+        "help": "Property rmcacheEnabled",
+        "name": "rmcache_enabled",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "rmcacheSizeInKb",
+        "type": "gauge",
+        "help": "Property rmcacheSizeInKb",
+        "name": "rmcache_size_kb"
+      },
+      {
+        "key": "rfcacheEnabled",
+        "type": "gauge",
+        "help": "Property rfcacheEnabled",
+        "name": "rfcache_enabled",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "perfProfile",
+        "type": "gauge",
+        "help": "Property perfProfile",
+        "name": "performance_profile",
+        "values": {
+          "Default": 0,
+          "HighPerformance": 1,
+          "Custom": 2
+        }
+      },
+      {
+        "key": "maintenanceState",
+        "type": "gauge",
+        "help": "Property maintenanceState",
+        "name": "maintenance_state",
+        "values": {
+          "NoMaintenance": 0,
+          "InMaintenance": 1,
+          "SetMaintenanceInProgress": 2,
+          "ExitMaintenanceInProgress": 3
+        }
       }
-    }
-  ],
-  "Sds":
-  [
-    {
-      "key": "membershipState",
-      "type": "gauge",
-      "help": "Property membershipState",
-      "name": "membership_state",
-      "values": {
-        "Joined": 0,
-        "Decoupled": 1,
-        "JoinPending": 2
+    ],
+    "StoragePool":
+    [
+      {
+        "key": "rebuildEnabled",
+        "type": "gauge",
+        "help": "Property rebuildEnabled",
+        "name": "rebuild_enabled",
+        "values": {
+          "true": 1,
+          "false": 0
+        }
+      },
+      {
+        "key": "rebalanceEnabled",
+        "type": "gauge",
+        "help": "Property rebalanceEnabled",
+        "name": "rebalance_enabled",
+        "values": {
+          "true": 1,
+          "false": 0
+        }
+      },
+      {
+        "key": "rebuildIoPriorityPolicy",
+        "type": "gauge",
+        "help": "Property rebuildIoPriorityPolicy",
+        "name": "rebuild_priority_policy",
+        "values": {
+          "unlimited": 0,
+          "limitNumOfConcurrentIos": 1,
+          "favorAppIos": 2,
+          "dynamicBwThrottling": 3
+        }
+      },
+      {
+        "key": "rebalanceIoPriorityPolicy",
+        "type": "gauge",
+        "help": "Property rebalanceIoPriorityPolicy",
+        "name": "rebalance_priority_policy",
+        "values": {
+          "unlimited": 0,
+          "limitNumOfConcurrentIos": 1,
+          "favorAppIos": 2,
+          "dynamicBwThrottling": 3
+        }
+      },
+      {
+        "key": "useRmcache",
+        "type": "gauge",
+        "help": "Property useRmcache",
+        "name": "use_rmcache",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "rmcacheWriteHandlingMode",
+        "type": "gauge",
+        "help": "Property rmcacheWriteHandlingMode",
+        "name": "rmcache_write_handling_mode",
+        "values": {
+          "Passthrough": 0,
+          "Cached": 1
+        }
+      },
+      {
+        "key": "useRfcache",
+        "type": "gauge",
+        "help": "Property useRfcache",
+        "name": "use_rfcache",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "capacityAlertHighThreshold",
+        "type": "gauge",
+        "help": "Property capacityAlertHighThreshold",
+        "name": "capacity_alert_high_threshold"
       }
-    },
-    {
-      "key": "perfProfile",
-      "type": "gauge",
-      "help": "Property perfProfile",
-      "name": "performance_profile",
-      "values": {
-        "Default": 0,
-        "HighPerformance": 1,
-        "Custom": 2
+    ],
+    "Volume":
+    [
+      {
+        "key": "sizeInKb",
+        "type": "gauge",
+        "help": "Property volumeSizeInKb",
+        "name": "size_kb"
+      },
+      {
+        "key": "volumeType",
+        "type": "gauge",
+        "help": "Property volumeType",
+        "name": "type",
+        "values": {
+          "ThickProvisioned": 0,
+          "ThinProvisioned": 1,
+          "Snapshot": 2
+        }
       }
-    },
-    {
-      "key": "maintenanceState",
-      "type": "gauge",
-      "help": "Property maintenanceState",
-      "name": "maintenance_state",
-      "values": {
-        "NoMaintenance": 0,
-        "InMaintenance": 1,
-        "SetMaintenanceInProgress": 2,
-        "ExitMaintenanceInProgress": 3
+    ],
+    "Sdc":
+    [
+      {
+        "key": "osType",
+        "type": "gauge",
+        "help": "Property osType",
+        "name": "os_type",
+        "values": {
+          "Linux": 0,
+          "Windows": 1,
+          "Esx": 2,
+          "Aix": 3
+        }
+      },
+      {
+        "key": "mdmConnectionState",
+        "type": "gauge",
+        "help": "Property mdmConnectionState",
+        "name": "mdm_connection_state",
+        "values": {
+          "Disconnected": 0,
+          "Connected": 1
+        }
+      },
+      {
+        "key": "perfProfile",
+        "type": "gauge",
+        "help": "Property perfProfile",
+        "name": "performance_profile",
+        "values": {
+          "Default": 0,
+          "HighPerformance": 1,
+          "Custom": 2
+        }
       }
-    }
-  ],
-  "StoragePool":
-  [
-    {
-      "key": "sparePercentage",
-      "type": "gauge",
-      "help": "Property sparePercentage",
-      "name": "spare_percentage"
-    },
-    {
-      "key": "rebuildEnabled",
-      "type": "gauge",
-      "help": "Property rebuildEnabled",
-      "name": "rebuild_enabled",
-      "values": {
-        "true": 1,
-        "false": 0
+    ]
+  },
+  "v3": {
+    "System":
+    [
+      {
+        "key": "mdmCluster/clusterMode",
+        "type": "gauge",
+        "help": "Property mdmCluster/clusterMode",
+        "name": "mdm_cluster_nodes",
+        "values": {
+          "Invalid": 0,
+          "OneNode": 1,
+          "ThreeNodes": 3,
+          "FiveNodes": 5
+        }
+      },
+      {
+        "key": "mdmCluster/clusterState",
+        "type": "gauge",
+        "help": "Property mdmCluster/clusterState",
+        "name": "mdm_cluster_state",
+        "values": {
+          "ClusteredNormal": 0,
+          "ClusteredDegraded": 1,
+          "Invalid": 2
+        }
+      },
+      {
+        "key": "mdmCluster/goodNodesNum",
+        "type": "gauge",
+        "help": "Property mdmCluster/goodNodesNum",
+        "name": "mdm_cluster_good_nodes"
+      },
+      {
+        "key": "mdmCluster/goodReplicasNum",
+        "type": "gauge",
+        "help": "Property mdmCluster/goodReplicasNum",
+        "name": "mdm_cluster_good_replicas"
       }
-    },
-    {
-      "key": "rebalanceEnabled",
-      "type": "gauge",
-      "help": "Property rebalanceEnabled",
-      "name": "rebalance_enabled",
-      "values": {
-        "true": 1,
-        "false": 0
+    ],
+    "ProtectionDomain":
+    [
+      {
+        "key": "protectionDomainState",
+        "type": "gauge",
+        "help": "Property protectionDomainState",
+        "name": "pd_state",
+        "values": {
+          "Active": 1,
+          "Inactive": 0
+        }
+      },
+      {
+        "key": "rfcacheEnabled",
+        "type": "gauge",
+        "help": "Property rfcacheEnabled",
+        "name": "rfcache_enabled",
+        "values": {
+          "true": 1,
+          "false": 0
+        }
+      },
+      {
+        "key": "rfcachePageSizeKb",
+        "type": "gauge",
+        "help": "Property rfcachePageSizeKb",
+        "name": "rfcache_pagesize_kb"
+      },
+      {
+        "key": "rfcacheMaxIoSizeKb",
+        "type": "gauge",
+        "help": "Property rfcacheMaxIoSizeKb",
+        "name": "rfcache_maxiosize_kb"
+      },
+      {
+        "key": "rfcacheOpertionalMode",
+        "type": "gauge",
+        "help": "Property rfcacheOpertionalMode",
+        "name": "rfcache_opmode",
+        "values": {
+          "Read": 0,
+          "Write": 1,
+          "ReadAndWrite": 2,
+          "WriteMiss": 3
+        }
       }
-    },
-    {
-      "key": "rebuildIoPriorityPolicy",
-      "type": "gauge",
-      "help": "Property rebuildIoPriorityPolicy",
-      "name": "rebuild_priority_policy",
-      "values": {
-        "unlimited": 0,
-        "limitNumOfConcurrentIos": 1,
-        "favorAppIos": 2,
-        "dynamicBwThrottling": 3
+    ],
+    "Sds":
+    [
+      {
+        "key": "membershipState",
+        "type": "gauge",
+        "help": "Property membershipState",
+        "name": "membership_state",
+        "values": {
+          "Joined": 0,
+          "Decoupled": 1,
+          "JoinPending": 2
+        }
+      },
+      {
+        "key": "rmcacheEnabled",
+        "type": "gauge",
+        "help": "Property rmcacheEnabled",
+        "name": "rmcache_enabled",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "rmcacheSizeInKb",
+        "type": "gauge",
+        "help": "Property rmcacheSizeInKb",
+        "name": "rmcache_size_kb"
+      },
+      {
+        "key": "rfcacheEnabled",
+        "type": "gauge",
+        "help": "Property rfcacheEnabled",
+        "name": "rfcache_enabled",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "perfProfile",
+        "type": "gauge",
+        "help": "Property perfProfile",
+        "name": "performance_profile",
+        "values": {
+          "Default": 0,
+          "HighPerformance": 1,
+          "Custom": 2
+        }
+      },
+      {
+        "key": "maintenanceState",
+        "type": "gauge",
+        "help": "Property maintenanceState",
+        "name": "maintenance_state",
+        "values": {
+          "NoMaintenance": 0,
+          "InMaintenance": 1,
+          "SetMaintenanceInProgress": 2,
+          "ExitMaintenanceInProgress": 3
+        }
       }
-    },
-    {
-      "key": "rebalanceIoPriorityPolicy",
-      "type": "gauge",
-      "help": "Property rebalanceIoPriorityPolicy",
-      "name": "rebalance_priority_policy",
-      "values": {
-        "unlimited": 0,
-        "limitNumOfConcurrentIos": 1,
-        "favorAppIos": 2,
-        "dynamicBwThrottling": 3
+    ],
+    "StoragePool":
+    [
+      {
+        "key": "rebuildEnabled",
+        "type": "gauge",
+        "help": "Property rebuildEnabled",
+        "name": "rebuild_enabled",
+        "values": {
+          "true": 1,
+          "false": 0
+        }
+      },
+      {
+        "key": "rebalanceEnabled",
+        "type": "gauge",
+        "help": "Property rebalanceEnabled",
+        "name": "rebalance_enabled",
+        "values": {
+          "true": 1,
+          "false": 0
+        }
+      },
+      {
+        "key": "rebuildIoPriorityPolicy",
+        "type": "gauge",
+        "help": "Property rebuildIoPriorityPolicy",
+        "name": "rebuild_priority_policy",
+        "values": {
+          "unlimited": 0,
+          "limitNumOfConcurrentIos": 1,
+          "favorAppIos": 2,
+          "dynamicBwThrottling": 3
+        }
+      },
+      {
+        "key": "rebalanceIoPriorityPolicy",
+        "type": "gauge",
+        "help": "Property rebalanceIoPriorityPolicy",
+        "name": "rebalance_priority_policy",
+        "values": {
+          "unlimited": 0,
+          "limitNumOfConcurrentIos": 1,
+          "favorAppIos": 2,
+          "dynamicBwThrottling": 3
+        }
+      },
+      {
+        "key": "useRmcache",
+        "type": "gauge",
+        "help": "Property useRmcache",
+        "name": "use_rmcache",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "rmcacheWriteHandlingMode",
+        "type": "gauge",
+        "help": "Property rmcacheWriteHandlingMode",
+        "name": "rmcache_write_handling_mode",
+        "values": {
+          "Passthrough": 0,
+          "Cached": 1
+        }
+      },
+      {
+        "key": "useRfcache",
+        "type": "gauge",
+        "help": "Property useRfcache",
+        "name": "use_rfcache",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      },
+      {
+        "key": "capacityAlertHighThreshold",
+        "type": "gauge",
+        "help": "Property capacityAlertHighThreshold",
+        "name": "capacity_alert_high_threshold"
       }
-    }
-  ],
-  "Volume":
-  [
-    {
-      "key": "sizeInKb",
-      "type": "gauge",
-      "help": "Property sizeInKb",
-      "name": "size_kb"
-    }
-  ],
-  "System":
-  [
-    {
-      "key": "mdmCluster/clusterMode",
-      "type": "gauge",
-      "help": "Property mdmCluster/clusterMode",
-      "name": "mdm_cluster_nodes",
-      "values": {
-        "Invalid": 0,
-        "OneNode": 1,
-        "ThreeNodes": 3,
-        "FiveNodes": 5
+    ],
+    "Volume":
+    [
+      {
+        "key": "sizeInKb",
+        "type": "gauge",
+        "help": "Property volumeSizeInKb",
+        "name": "size_kb"
+      },
+      {
+        "key": "volumeType",
+        "type": "gauge",
+        "help": "Property volumeType",
+        "name": "type",
+        "values": {
+          "ThickProvisioned": 0,
+          "ThinProvisioned": 1,
+          "Snapshot": 2
+        }
       }
-    },
-    {
-      "key": "mdmCluster/clusterState",
-      "type": "gauge",
-      "help": "Property mdmCluster/clusterState",
-      "name": "mdm_cluster_state",
-      "values": {
-        "ClusteredNormal": 0,
-        "ClusteredDegraded": 1,
-        "Invalid": 2
+    ],
+    "Sdc":
+    [
+      {
+        "key": "osType",
+        "type": "gauge",
+        "help": "Property osType",
+        "name": "os_type",
+        "values": {
+          "Linux": 0,
+          "Windows": 1,
+          "Esx": 2,
+          "Aix": 3
+        }
+      },
+      {
+        "key": "mdmConnectionState",
+        "type": "gauge",
+        "help": "Property mdmConnectionState",
+        "name": "mdm_connection_state",
+        "values": {
+          "Disconnected": 0,
+          "Connected": 1
+        }
+      },
+      {
+        "key": "perfProfile",
+        "type": "gauge",
+        "help": "Property perfProfile",
+        "name": "performance_profile",
+        "values": {
+          "Default": 0,
+          "HighPerformance": 1,
+          "Custom": 2
+        }
       }
-    },
-    {
-      "key": "mdmCluster/goodNodesNum",
-      "type": "gauge",
-      "help": "Property mdmCluster/goodNodesNum",
-      "name": "mdm_cluster_good_nodes"
-    },
-    {
-      "key": "mdmCluster/goodReplicasNum",
-      "type": "gauge",
-      "help": "Property mdmCluster/goodReplicasNum",
-      "name": "mdm_cluster_good_replicas"
-    }
-  ],
-  "Volume":
-  [
-    {
-      "key": "sizeInKb",
-      "type": "gauge",
-      "help": "Property volumeSizeInKb",
-      "name": "size_kb"
-    }
-  ]
+    ],
+    "AccelerationPool":
+    [
+      {
+        "key": "mediaType",
+        "type": "gauge",
+        "help": "Property mediaType",
+        "name": "media_type",
+        "values": {
+          "SSD": 0,
+          "NVDIMM": 1
+        }        
+      },
+      {
+        "key": "isRfcache",
+        "type": "gauge",
+        "help": "Property isRfcache",
+        "name": "is_rfcache",
+        "values": {
+          "false": 0,
+          "true": 1
+        }
+      }
+    ]
+  }
 }
