@@ -228,6 +228,14 @@ class VxFlexOSExporter
                    pd_name: protection_domain['name'],
                    stp_id: params[:id],
                    stp_name: storage_pool['name']})
+    elsif params[:type] == 'AccelerationPool'
+      protection_domain_id = params[:tree]['accelerationPoolList'].select{|acp| acp['id'] == params[:id]}.first['protectionDomainId']
+      protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      acceleration_pool = params[:tree]['accelerationPoolList'].select{|acp| acp['id'] == params[:id]}.first
+      tags.merge!({pd_id: protection_domain_id,
+                   pd_name: protection_domain['name'],
+                   acp_id: params[:id],
+                   acp_name: acceleration_pool['name']})
     elsif params[:type] == 'Volume'
       storage_pool_id = params[:tree]['volumeList'].select{|vol| vol['id'] == params[:id]}.first['storagePoolId']
       storage_pool = params[:tree]['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
@@ -240,8 +248,7 @@ class VxFlexOSExporter
                    stp_name: storage_pool['name'],
                    vol_id: params[:id],
                    vol_name: volume['name']})
-    elsif params[:type] == 'Device'
-      device = params[:tree]['deviceList'].select{|dev| dev['id'] == params[:id]}.first
+    elsif params[:type] == 'Device' && (device = params[:tree]['deviceList'].select{|dev| dev['id'] == params[:id]}.first) && device['storagePoolId']
       storage_pool_id = device['storagePoolId']
       storage_pool = params[:tree]['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
       sds_id = device['sdsId']
@@ -257,6 +264,22 @@ class VxFlexOSExporter
                    dev_id: params[:id],
                    dev_name: device['name'],
                    dev_path: device['deviceCurrentPathName']})
+    elsif params[:type] == 'Device' && (device = params[:tree]['deviceList'].select{|dev| dev['id'] == params[:id]}.first) && device['accelerationPoolId']
+      acceleration_pool_id = device['accelerationPoolId']
+      acceleration_pool = params[:tree]['accelerationPoolList'].select{|sto| sto['id'] == storage_pool_id}.first
+      sds_id = device['sdsId']
+      sds = params[:tree]['sdsList'].select{|sds| sds['id'] == sds_id}.first
+      protection_domain_id = acceleration_pool['protectionDomainId']
+      protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
+      tags.merge!({pd_id: protection_domain_id,
+                    pd_name: protection_domain['name'],
+                    acp_id: acceleration_pool_id,
+                    acp_name: acceleration_pool['name'],
+                    sds_id: sds_id,
+                    sds_name: sds['name'],
+                    dev_id: params[:id],
+                    dev_name: device['name'],
+                    dev_path: device['deviceCurrentPathName']})
     elsif params[:type] == 'RfcacheDevice'
       rfdevice = params[:tree]['rfcacheDeviceList'].select{|dev| dev['id'] == params[:id]}.first
       sds_id = rfdevice['sdsId']
