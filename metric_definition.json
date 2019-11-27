@@ -314,12 +314,12 @@
     "help": "Property rfcacheReadsFromCache",
     "name" : "rfcache_reads_from_cache"
   },
-  "rfcacheFdInflightReads": {
+  "rfcacheFdInlightReads": {
     "type" : "counter",
     "help": "Property rfcacheFdInflightReads",
     "name" : "rfcache_fd_inflight_reads"
   },
-  "rfcacheFdInflightWrites": {
+  "rfcacheFdInlightWrites": {
     "type" : "counter",
     "help": "Property rfcacheFdInflightWrites",
     "name" : "rfcache_fd_inflight_writes"
