@@ -29,7 +29,7 @@ class VxFlexOSExporter
     json = file.read
     @defs = JSON.parse(json) rescue raise('config file metric_definition.json has some syntax errors inside, please validate it')
 
-    if File.exists?('properties_selected.json')
+    if File.exist?('properties_selected.json')
       file = open("properties_selected.json")
       json = file.read
       @props = JSON.parse(json) rescue raise('config file properties_selected.json has some syntax errors inside, please validate it')
@@ -80,11 +80,11 @@ class VxFlexOSExporter
                   session.print "Content-Type: text/plaintext\r\n"
                   session.print "\r\n"
                   output_stats(stats_processed, session)
-                rescue => e
-                  session.print "HTTP/1.1 500\r\n"
-                  session.print "Content-Type: text/plaintext\r\n"
-                  session.print "\r\n"
-                  session.print "An exception raised while communicating with VXFlexOS: #{e}"
+                #rescue => e
+                #  session.print "HTTP/1.1 500\r\n"
+                #  session.print "Content-Type: text/plaintext\r\n"
+                #  session.print "\r\n"
+                #  session.print "An exception raised while communicating with VXFlexOS: #{e}"
                 end
               else
                 session.print "HTTP/1.1 404\r\n"
@@ -92,8 +92,8 @@ class VxFlexOSExporter
                 session.print "\r\n"
                 session.print "Not Found! VXFlexOS Exporter only listens on /metrics"
               end
-            rescue => e
-              puts "#{profile_name}: exception #{e}"
+            #rescue => e
+            #  puts "#{profile_name}: exception #{e}"
             end
           end
 
@@ -202,52 +202,52 @@ class VxFlexOSExporter
   end
 
   def get_tags(params)
-    tags = {sys_id: params[:tree]['System']['id'],
-            sys_name: params[:tree]['System']['name']}
+    tags = {sys_id: params[:tree]['System']['id']}
+    tags.merge!(sys_name: params[:tree]['System']['name']) if params[:tree]['System']['name']
     if params[:type] == 'Sdc'
-      sdc = params[:tree]['sdcList'].select{|sdc| sdc['id'] == params[:id]}.first
-      tags.merge!({sdc_id: params[:id],
-                   sdc_name: sdc['name']})
+      sdc = params[:tree]['sdcList'].select{|s| s['id'] == params[:id]}.first
+      tags.merge!(sdc_id: params[:id])
+      tags.merge!(sdc_name: sdc['name']) if sdc['name']
     elsif params[:type] == 'ProtectionDomain'
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == params[:id]}.first
-      tags.merge!({pd_id: params[:id],
-                   pd_name: protection_domain['name']})
+      tags.merge!(pd_id: params[:id])
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
     elsif params[:type] == 'Sds'
       protection_domain_id = params[:tree]['sdsList'].select{|sds| sds['id'] == params[:id]}.first['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-      sds = params[:tree]['sdsList'].select{|sds| sds['id'] == params[:id]}.first
-      tags.merge!({pd_id: protection_domain_id,
-                   pd_name: protection_domain['name'],
-                   sds_id: params[:id],
-                   sds_name: sds['name']})
+      sds = params[:tree]['sdsList'].select{|s| s['id'] == params[:id]}.first
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(sds_id: params[:id])
+      tags.merge!(sds_name: sds['name']) if sds['name']
     elsif params[:type] == 'StoragePool'
       protection_domain_id = params[:tree]['storagePoolList'].select{|sto| sto['id'] == params[:id]}.first['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
       storage_pool = params[:tree]['storagePoolList'].select{|sto| sto['id'] == params[:id]}.first
-      tags.merge!({pd_id: protection_domain_id,
-                   pd_name: protection_domain['name'],
-                   stp_id: params[:id],
-                   stp_name: storage_pool['name']})
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(stp_id: params[:id])
+      tags.merge!(stp_name: storage_pool['name']) if storage_pool['name']
     elsif params[:type] == 'AccelerationPool'
       protection_domain_id = params[:tree]['accelerationPoolList'].select{|acp| acp['id'] == params[:id]}.first['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
       acceleration_pool = params[:tree]['accelerationPoolList'].select{|acp| acp['id'] == params[:id]}.first
-      tags.merge!({pd_id: protection_domain_id,
-                   pd_name: protection_domain['name'],
-                   acp_id: params[:id],
-                   acp_name: acceleration_pool['name']})
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(acp_id: params[:id])
+      tags.merge!(acp_name: acceleration_pool['name']) if acceleration_pool['name']
     elsif params[:type] == 'Volume'
       storage_pool_id = params[:tree]['volumeList'].select{|vol| vol['id'] == params[:id]}.first['storagePoolId']
       storage_pool = params[:tree]['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
       protection_domain_id = storage_pool['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
       volume = params[:tree]['volumeList'].select{|vol| vol['id'] == params[:id]}.first
-      tags.merge!({pd_id: protection_domain_id,
-                   pd_name: protection_domain['name'],
-                   stp_id: storage_pool_id,
-                   stp_name: storage_pool['name'],
-                   vol_id: params[:id],
-                   vol_name: volume['name']})
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(stp_id: storage_pool_id)
+      tags.merge!(stp_name: storage_pool['name']) if storage_pool['name']
+      tags.merge!(vol_id: params[:id])
+      tags.merge!(vol_name: volume['name']) if volume['name']
     elsif params[:type] == 'Device' && (device = params[:tree]['deviceList'].select{|dev| dev['id'] == params[:id]}.first) && device['storagePoolId']
       storage_pool_id = device['storagePoolId']
       storage_pool = params[:tree]['storagePoolList'].select{|sto| sto['id'] == storage_pool_id}.first
@@ -255,15 +255,15 @@ class VxFlexOSExporter
       sds = params[:tree]['sdsList'].select{|sds| sds['id'] == sds_id}.first
       protection_domain_id = storage_pool['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-      tags.merge!({pd_id: protection_domain_id,
-                   pd_name: protection_domain['name'],
-                   stp_id: storage_pool_id,
-                   stp_name: storage_pool['name'],
-                   sds_id: sds_id,
-                   sds_name: sds['name'],
-                   dev_id: params[:id],
-                   dev_name: device['name'],
-                   dev_path: device['deviceCurrentPathName']})
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(stp_id: storage_pool_id)
+      tags.merge!(stp_name: storage_pool['name']) if storage_pool['name']
+      tags.merge!(sds_id: sds_id)
+      tags.merge!(sds_name: sds['name']) if sds['name']
+      tags.merge!(dev_id: params[:id])
+      tags.merge!(dev_name: device['name']) if device['name']
+      tags.merge!(dev_path: device['deviceCurrentPathName']) if device['deviceCurrentPathName']
     elsif params[:type] == 'Device' && (device = params[:tree]['deviceList'].select{|dev| dev['id'] == params[:id]}.first) && device['accelerationPoolId']
       acceleration_pool_id = device['accelerationPoolId']
       acceleration_pool = params[:tree]['accelerationPoolList'].select{|sto| sto['id'] == storage_pool_id}.first
@@ -271,28 +271,28 @@ class VxFlexOSExporter
       sds = params[:tree]['sdsList'].select{|sds| sds['id'] == sds_id}.first
       protection_domain_id = acceleration_pool['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-      tags.merge!({pd_id: protection_domain_id,
-                    pd_name: protection_domain['name'],
-                    acp_id: acceleration_pool_id,
-                    acp_name: acceleration_pool['name'],
-                    sds_id: sds_id,
-                    sds_name: sds['name'],
-                    dev_id: params[:id],
-                    dev_name: device['name'],
-                    dev_path: device['deviceCurrentPathName']})
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(acp_id: acceleration_pool_id)
+      tags.merge!(acp_name: acceleration_pool['name']) if acceleration_pool['name']
+      tags.merge!(sds_id: sds_id)
+      tags.merge!(sds_name: sds['name']) if sds['name']
+      tags.merge!(dev_id: params[:id])
+      tags.merge!(dev_name: device['name']) if device['name']
+      tags.merge!(dev_path: device['deviceCurrentPathName']) if device['deviceCurrentPathName']
     elsif params[:type] == 'RfcacheDevice'
       rfdevice = params[:tree]['rfcacheDeviceList'].select{|dev| dev['id'] == params[:id]}.first
       sds_id = rfdevice['sdsId']
       sds = params[:tree]['sdsList'].select{|sds| sds['id'] == sds_id}.first
       protection_domain_id = sds['protectionDomainId']
       protection_domain = params[:tree]['protectionDomainList'].select{|pdo| pdo['id'] == protection_domain_id}.first
-      tags.merge!({pd_id: protection_domain_id,
-                   pd_name: protection_domain['name'],
-                   sds_id: sds_id,
-                   sds_name: sds['name'],
-                   rfdev_id: params[:id],
-                   rfdev_name: rfdevice['name'],
-                   rfdev_path: rfdevice['deviceCurrentPathname']})
+      tags.merge!(pd_id: protection_domain_id)
+      tags.merge!(pd_name: protection_domain['name']) if protection_domain['name']
+      tags.merge!(sds_id: sds_id)
+      tags.merge!(sds_name: sds['name']) if sds['name']
+      tags.merge!(rfdev_id: params[:id])
+      tags.merge!(rfdev_name: rfdevice['name']) if rfdevice['name']
+      tags.merge!(rfdev_path: rfdevice['deviceCurrentPathname']) if rfdevice['deviceCurrentPathname']
     end
     tags
   end
@@ -368,13 +368,13 @@ class VxFlexOSExporter
 
   def output_stats(stats, target)
     stats.group_by{|s| s[:type]+s[:param]+(s[:postfix] || '')}.each do |group, rows|
-      path_str = PREFIX + rows[0][:type].downcase + '_' + rows[0][:display_name] + (rows[0][:postfix] ? '_'+rows[0][:postfix] : '')
-      target.print "# HELP #{path_str} #{rows[0][:help]}" + "\n" if rows[0][:help]
-      target.print "# TYPE #{path_str} #{rows[0][:promtype]}" + "\n" if rows[0][:promtype]
+      path_str = "#{PREFIX}#{rows[0][:type].downcase}_#{rows[0][:display_name]}" + (rows[0][:postfix] ? '_'+rows[0][:postfix] : '')
+      target.print "# HELP #{path_str} #{rows[0][:help]}\n" if rows[0][:help]
+      target.print "# TYPE #{path_str} #{rows[0][:promtype]}\n" if rows[0][:promtype]
 
       rows.each do |row|
-        tags_str = '{' + row[:tags].map{|t,v| t.to_s + '="' + v + '"'}.join(',') + '}'
-        target.print path_str + tags_str + ' ' + row[:value].to_s + "\n"
+        tags_str = "{#{ row[:tags].map{|t,v| "#{t}=\"#{v}\""}.join(',')}}"
+        target.print "#{path_str}#{tags_str} #{row[:value]}\n"
       end
     end
   end
