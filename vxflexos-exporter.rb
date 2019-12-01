@@ -72,8 +72,17 @@ class VxFlexOSExporter
                   stats_processed += process_tree(version: version, tree: tree)
                   storage_disk_ids = tree['deviceList'].select{|disk| !disk['storagePoolId'].nil?}.map{|disk| disk['id']}
                   acceleration_disk_ids = tree['deviceList'].select{|disk| !disk['accelerationPoolId'].nil?}.map{|disk| disk['id']}
-                  stats = get_stats(version: version, host: profile['host'], port: (profile['port'] || 443), token: token, storage_disk_ids: storage_disk_ids, acceleration_disk_ids: acceleration_disk_ids)
-                  stats_processed += process_stats(version: version, tree: tree, stats: stats)
+                  @query[version].each do |query|
+                    if version == 'v3'
+                      query['selectedStatisticsList'].select{|t| t['type'] == 'Device'}.each do |d|
+                        d['ids'] = acceleration_disk_ids if d['ids'] == 'ACCELERATION_POOLS_DEVICES_IDS'
+                        d['ids'] = storage_disk_ids if d['ids'] == 'STORAGE_POOLS_DEVICES_IDS'
+                      end
+                    end
+                    stats = get_stats(version: version, host: profile['host'], port: (profile['port'] || 443), token: token, query: query)
+                    stats_processed += process_stats(version: version, tree: tree, stats: stats)
+                  end
+
                   stats_processed = convert_kb_iops(stats_processed)
 
                   session.print "HTTP/1.1 200\r\n"
@@ -181,12 +190,7 @@ class VxFlexOSExporter
     Net::HTTP.start(params[:host], params[:port], use_ssl: true, verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
       request = Net::HTTP::Post.new(uri.request_uri, {'Content-Type': 'application/json'})
       request.basic_auth('', params[:token])
-      query = @query[params[:version]].dup
-      if params[:version] == 'v3'
-        query['selectedStatisticsList'].select{|t| t['type'] == 'Device'}.first.delete('allIds')
-        query['selectedStatisticsList'].select{|t| t['type'] == 'Device'}.first['ids'] = params[:storage_disk_ids]
-      end
-      request.body = query.to_json
+      request.body = params[:query].to_json
 
       response = http.request(request)
       json = JSON.parse(response.body) rescue nil
@@ -266,7 +270,7 @@ class VxFlexOSExporter
       tags.merge!(dev_path: device['deviceCurrentPathName']) if device['deviceCurrentPathName']
     elsif params[:type] == 'Device' && (device = params[:tree]['deviceList'].select{|dev| dev['id'] == params[:id]}.first) && device['accelerationPoolId']
       acceleration_pool_id = device['accelerationPoolId']
-      acceleration_pool = params[:tree]['accelerationPoolList'].select{|sto| sto['id'] == storage_pool_id}.first
+      acceleration_pool = params[:tree]['accelerationPoolList'].select{|sto| sto['id'] == acceleration_pool_id}.first
       sds_id = device['sdsId']
       sds = params[:tree]['sdsList'].select{|sds| sds['id'] == sds_id}.first
       protection_domain_id = acceleration_pool['protectionDomainId']
