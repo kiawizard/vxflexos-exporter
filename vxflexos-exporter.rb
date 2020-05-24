@@ -16,6 +16,11 @@ require 'pry' if gem_available?('pry')
 class VxFlexOSExporter
   PREFIX = 'vxf_'
 
+  def log(profile_name, message)
+    IO.write("errors_#{profile_name}.log", "[#{Time.now.strftime('%Y%m%d %T')}] #{message}\r\n", mode: 'a')
+    puts(message)
+  end
+
   def initialize
     file = open("config.json") rescue raise('config file config.json is missing in the root folder of VxFlexOSExporter')
     json = file.read
@@ -89,11 +94,19 @@ class VxFlexOSExporter
                   session.print "Content-Type: text/plaintext\r\n"
                   session.print "\r\n"
                   output_stats(stats_processed, session)
-                #rescue => e
-                #  session.print "HTTP/1.1 500\r\n"
-                #  session.print "Content-Type: text/plaintext\r\n"
-                #  session.print "\r\n"
-                #  session.print "An exception raised while communicating with VXFlexOS: #{e}"
+                rescue => e
+                  begin
+                    session.print "HTTP/1.1 500\r\n"
+                    session.print "Content-Type: text/plaintext\r\n"
+                    session.print "\r\n"
+                    session.print "An exception raised while communicating with VXFlexOS: #{e}"
+                    session.print e.backtrace
+                    log(profile_name, "An exception raised while communicating with VXFlexOS: #{e}")
+                    log(profile_name, e.backtrace)
+                  rescue => e
+                    log(profile_name, "An exception raised, the browser already disconnected: #{e}")
+                    log(profile_name, e.backtrace)
+                  end
                 end
               else
                 session.print "HTTP/1.1 404\r\n"
@@ -101,8 +114,9 @@ class VxFlexOSExporter
                 session.print "\r\n"
                 session.print "Not Found! VXFlexOS Exporter only listens on /metrics"
               end
-            #rescue => e
-            #  puts "#{profile_name}: exception #{e}"
+            rescue => e
+              log(profile_name, "An exception raised: #{e}")
+              log(profile_name, e.backtrace)
             end
           end
 
