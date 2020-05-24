@@ -78,6 +78,7 @@ class VxFlexOSExporter
                   storage_disk_ids = tree['deviceList'].select{|disk| !disk['storagePoolId'].nil?}.map{|disk| disk['id']}
                   acceleration_disk_ids = tree['deviceList'].select{|disk| !disk['accelerationPoolId'].nil?}.map{|disk| disk['id']}
                   @query[version].each do |query|
+                    query = Marshal.load(Marshal.dump(query)) #clone, dupe and Hash.new.merge won't copy embedded arrays!
                     if version == 'v3'
                       query['selectedStatisticsList'].select{|t| t['type'] == 'Device'}.each do |d|
                         d['ids'] = acceleration_disk_ids if d['ids'] == 'ACCELERATION_POOLS_DEVICES_IDS'
